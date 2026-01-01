@@ -11,29 +11,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-//@Component
-//public class JwtUtil {
-//
-//    @Value("${spring.security.jwt.secret}")
-//    private String secret;
-//
-//    @Value("${spring.security.jwt.expiration}")
-//    private long expiration;
-//
-//    public String generateToken(String username, String role) {
-//        return Jwts.builder()
-//                .setSubject(username)
-//                .claim("role", role)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-//                .signWith(SignatureAlgorithm.HS256, secret)
-//                .compact();
-//    }
-//
-//    public Claims validateToken(String token) {
-//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-//    }
-//}
 @Component
 public class JwtUtil {
 

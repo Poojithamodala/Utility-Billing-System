@@ -21,7 +21,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 
         return http
-                .csrf(csrf -> csrf.disable()) // correct WebFlux syntax
+                .csrf(csrf -> csrf.disable()) 
                 .authorizeExchange(exchange -> exchange
                 		.pathMatchers(HttpMethod.POST, "/auth/internal/**").hasRole("ADMIN")
                 		.pathMatchers(HttpMethod.POST, "/auth/activate").permitAll()

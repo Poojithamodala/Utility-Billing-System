@@ -65,6 +65,11 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 								// Duplicate reading check (same billing cycle)
 								YearMonth lastCycle = YearMonth.from(lastReading.getReadingDate());
 
+								if (lastCycle.equals(readingMonth) && lastReading.getStatus() == ReadingStatus.BILLED) {
+									return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
+											"Reading already billed for this cycle"));
+								}
+
 								if (lastCycle.equals(readingMonth)) {
 									return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
 											"Meter reading already recorded for this billing cycle"));
@@ -98,11 +103,9 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 											"Units consumed must be greater than zero"));
 								}
 
-								MeterReading reading = MeterReading.builder()
-										.connectionId(connection.getId())
+								MeterReading reading = MeterReading.builder().connectionId(connection.getId())
 										.consumerEmail(connection.getConsumerEmail())
-										.utilityType(connection.getUtilityType())
-										.previousReading(previous)
+										.utilityType(connection.getUtilityType()).previousReading(previous)
 										.currentReading(current).unitsConsumed(units)
 										.readingDate(request.getReadingDate())
 										.billingCycle(connection.getBillingCycle()).status(ReadingStatus.RECORDED)
@@ -114,7 +117,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 	}
 
 	private String extractToken(String authHeader) {
-		return authHeader.substring(7); //to remove bearer
+		return authHeader.substring(7); // to remove bearer
 	}
 
 	// GET READINGS BY CONNECTION
@@ -130,15 +133,15 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Connection not found")))
 				.flatMapMany(connection -> {
 
-					//Ownership check for CONSUMER
-	            	if ("CONSUMER".equals(role)) {
+					// Ownership check for CONSUMER
+					if ("CONSUMER".equals(role)) {
 						if (!connection.getConsumerEmail().equals(username)) {
 							return Flux.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
 									"You are not allowed to view readings for this connection"));
 						}
 					}
 
-					//Fetch readings
+					// Fetch readings
 					return repository.findByConnectionId(connectionId)
 							.sort(Comparator.comparing(MeterReading::getReadingDate)).collectList()
 							.flatMapMany(readings -> {
@@ -162,12 +165,29 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 				.map(this::toResponse);
 	}
 
+	// GET READING BY READING ID
 	@Override
 	public Mono<MeterReadingResponse> getReadingById(String readingId) {
 
 		return repository.findById(readingId)
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Meter reading not found")))
 				.map(this::toResponse);
+	}
+
+	// MARK READING AS BILLED
+	@Override
+	public Mono<Void> markReadingAsBilled(String readingId) {
+		return repository.findById(readingId)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Meter reading not found")))
+				.flatMap(reading -> {
+
+					if (reading.getStatus() == ReadingStatus.BILLED) {
+						return Mono.empty();
+					}
+
+					reading.setStatus(ReadingStatus.BILLED);
+					return repository.save(reading).then();
+				});
 	}
 
 	private MeterReadingResponse toResponse(MeterReading reading) {

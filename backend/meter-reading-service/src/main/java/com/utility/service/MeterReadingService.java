@@ -11,4 +11,5 @@ public interface MeterReadingService {
     Flux<MeterReadingResponse> getReadingsByConnection(String connectionId, String authHeader);
     Flux<MeterReadingResponse> getAllReadings();
     Mono<MeterReadingResponse> getReadingById(String readingId);
+    Mono<Void> markReadingAsBilled(String readingId);
 }

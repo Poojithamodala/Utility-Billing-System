@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +48,10 @@ public class MeterReadingController {
 	@GetMapping("/{readingId}")
 	public Mono<MeterReadingResponse> getById(@PathVariable String readingId) {
 		return service.getReadingById(readingId);
+	}
+	
+	@PutMapping("/{id}/mark-billed")
+	public Mono<Void> markAsBilled(@PathVariable String id) {
+	    return service.markReadingAsBilled(id);
 	}
 }

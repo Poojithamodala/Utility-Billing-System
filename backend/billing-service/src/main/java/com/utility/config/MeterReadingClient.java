@@ -22,4 +22,12 @@ public class MeterReadingClient {
 				.retrieve()
 				.bodyToMono(MeterReadingDTO.class);
 	}
+	
+	public Mono<Void> markReadingAsBilled(String readingId, String authHeader) {
+	    return meterReadingWebClient.put()
+	        .uri("/meter-readings/{id}/mark-billed", readingId)
+	        .header(HttpHeaders.AUTHORIZATION, authHeader)
+	        .retrieve()
+	        .bodyToMono(Void.class);
+	}
 }

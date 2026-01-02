@@ -12,6 +12,7 @@ import com.utility.config.TariffClient;
 import com.utility.dto.BillGenerateRequest;
 import com.utility.dto.BillResponse;
 import com.utility.dto.ConnectionDTO;
+import com.utility.dto.ConnectionStatus;
 import com.utility.dto.MeterReadingDTO;
 import com.utility.dto.TariffPlanDTO;
 import com.utility.model.Bill;
@@ -71,6 +72,13 @@ public class BillingServiceImpl implements BillingService {
 
                 MeterReadingDTO reading = tuple.getT1();
                 ConnectionDTO connection = tuple.getT2();
+                
+                if (connection.getStatus() != ConnectionStatus.ACTIVE) {
+                    return Mono.error(new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Cannot generate bill for inactive connection"
+                    ));
+                }
 
                 return tariffClient
                         .getTariff(connection.getTariffPlanId(), authHeader)
@@ -111,7 +119,11 @@ public class BillingServiceImpl implements BillingService {
                         .build();
 
                 return repository.save(bill);
-            })
+            }).flatMap(bill ->
+            meterReadingClient
+            .markReadingAsBilled(bill.getMeterReadingId(), authHeader)
+            .thenReturn(bill)
+            )
             .map(this::toResponse);
     }
 

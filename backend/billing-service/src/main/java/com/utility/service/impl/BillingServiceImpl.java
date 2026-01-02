@@ -131,6 +131,24 @@ public class BillingServiceImpl implements BillingService {
 	public Flux<BillResponse> getBillsForConsumer(String consumerId, String authHeader) {
 		return repository.findByConsumerId(consumerId).map(this::toResponse);
 	}
+	
+	@Override
+	public Mono<Void> updateBillStatus(String billId, BillStatus status) {
+		return repository.findById(billId).flatMap(bill -> {
+			bill.setStatus(status);
+			return repository.save(bill).then();
+		});
+	}
+	
+	@Override
+	public Mono<BillResponse> getBillById(String billId) {
+		if (billId == null || billId.isBlank()) {
+			return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bill ID is required"));
+		}
+		return repository.findById(billId)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bill not found")))
+				.map(this::toResponse);
+	}
 
     private BillResponse toResponse(Bill bill) {
         return BillResponse.builder()

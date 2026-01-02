@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.utility.dto.BillGenerateRequest;
 import com.utility.dto.BillResponse;
+import com.utility.model.BillStatus;
 import com.utility.service.BillingService;
 
 import jakarta.validation.Valid;
@@ -34,5 +36,15 @@ public class BillingController {
 	@GetMapping("/consumer/{consumerId}")
 	public Flux<BillResponse> consumerBills(@PathVariable String consumerId) {
 		return service.getBillsForConsumer(consumerId, null);
+	}
+	
+	@GetMapping("/{billId}")
+	public Mono<BillResponse> getBillById(@PathVariable String billId) {
+	    return service.getBillById(billId);
+	}
+
+	@PutMapping("/{id}/status/{status}")
+	public Mono<Void> updateStatus(@PathVariable String id, @PathVariable BillStatus status) {
+		return service.updateBillStatus(id, status);
 	}
 }

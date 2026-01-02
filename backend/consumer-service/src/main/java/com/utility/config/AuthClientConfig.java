@@ -15,7 +15,7 @@ public class AuthClientConfig {
     @Bean
     public WebClient authWebClient(WebClient.Builder builder) {
         return builder
-                .baseUrl("http://localhost:8081") 
+                .baseUrl("http://localhost:8765/auth-service") 
                 .build();
     }
 }

@@ -92,17 +92,6 @@ public class ConsumerServiceImpl implements ConsumerService {
                 .switchIfEmpty(Mono.error(new RuntimeException("Consumer not found")))
                 .map(this::mapToResponse);
     }
-
-    private ConsumerResponse mapToResponse(Consumer consumer) {
-        return ConsumerResponse.builder()
-                .id(consumer.getId())
-                .name(consumer.getName())
-                .username(consumer.getUsername())
-                .email(consumer.getEmail())
-                .phone(consumer.getPhone())
-                .address(consumer.getAddress())
-                .build();
-    }
     
     @Override
     public Flux<ConsumerResponse> getAllConsumers() {
@@ -172,5 +161,16 @@ public class ConsumerServiceImpl implements ConsumerService {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Consumer not found or already deleted")))
                 .flatMap(consumer -> repository.delete(consumer));
+    }
+    
+    private ConsumerResponse mapToResponse(Consumer consumer) {
+        return ConsumerResponse.builder()
+                .id(consumer.getId())
+                .name(consumer.getName())
+                .username(consumer.getUsername())
+                .email(consumer.getEmail())
+                .phone(consumer.getPhone())
+                .address(consumer.getAddress())
+                .build();
     }
 }

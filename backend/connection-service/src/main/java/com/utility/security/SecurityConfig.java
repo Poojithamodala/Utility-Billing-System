@@ -14,29 +14,13 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
 public class SecurityConfig {
-
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(
-            ServerHttpSecurity http,
-            JwtAuthenticationFilter jwtFilter) {
-
-        return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-
-                .securityContextRepository(
-                        NoOpServerSecurityContextRepository.getInstance()
-                )
-
-                .authorizeExchange(ex -> ex
-                        .anyExchange().authenticated()
-                )
-
-                .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-
-                .build();
+    SecurityWebFilterChain filter(ServerHttpSecurity http) {
+    	return http
+    			.csrf(ServerHttpSecurity.CsrfSpec::disable)
+                   .authorizeExchange(ex -> ex.anyExchange().permitAll())
+                   .build();
     }
 }
+

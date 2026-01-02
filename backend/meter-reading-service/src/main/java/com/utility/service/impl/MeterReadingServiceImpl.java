@@ -30,7 +30,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 	private final ConnectionClient connectionClient;
 	private final JwtUtil jwtUtil;
 
-	// RECORD METER READINGS
+//	 RECORD METER READINGS
 	@Override
 	public Mono<MeterReadingResponse> recordReading(MeterReadingRequest request, String authHeader) {
 
@@ -98,8 +98,11 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 											"Units consumed must be greater than zero"));
 								}
 
-								MeterReading reading = MeterReading.builder().connectionId(connection.getId())
-										.utilityType(connection.getUtilityType()).previousReading(previous)
+								MeterReading reading = MeterReading.builder()
+										.connectionId(connection.getId())
+										.consumerEmail(connection.getConsumerEmail())
+										.utilityType(connection.getUtilityType())
+										.previousReading(previous)
 										.currentReading(current).unitsConsumed(units)
 										.readingDate(request.getReadingDate())
 										.billingCycle(connection.getBillingCycle()).status(ReadingStatus.RECORDED)
@@ -111,7 +114,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 	}
 
 	private String extractToken(String authHeader) {
-		return authHeader.substring(7); // remove "Bearer "
+		return authHeader.substring(7); //to remove bearer
 	}
 
 	// GET READINGS BY CONNECTION
@@ -127,15 +130,15 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Connection not found")))
 				.flatMapMany(connection -> {
 
-					// 1️⃣ Ownership check for CONSUMER
-					if ("CONSUMER".equals(role)) {
-						if (!connection.getConsumerId().equals(username)) {
+					//Ownership check for CONSUMER
+	            	if ("CONSUMER".equals(role)) {
+						if (!connection.getConsumerEmail().equals(username)) {
 							return Flux.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
 									"You are not allowed to view readings for this connection"));
 						}
 					}
 
-					// 2️⃣ Fetch readings
+					//Fetch readings
 					return repository.findByConnectionId(connectionId)
 							.sort(Comparator.comparing(MeterReading::getReadingDate)).collectList()
 							.flatMapMany(readings -> {
@@ -167,13 +170,18 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 				.map(this::toResponse);
 	}
 
-	// ===============================
-	// MAPPER
-	// ===============================
-	private MeterReadingResponse toResponse(MeterReading r) {
-		return MeterReadingResponse.builder().id(r.getId()).connectionId(r.getConnectionId())
-				.utilityType(r.getUtilityType()).previousReading(r.getPreviousReading())
-				.currentReading(r.getCurrentReading()).unitsConsumed(r.getUnitsConsumed())
-				.readingDate(r.getReadingDate()).billingCycle(r.getBillingCycle()).status(r.getStatus()).build();
+	private MeterReadingResponse toResponse(MeterReading reading) {
+		return MeterReadingResponse.builder()
+				.id(reading.getId())
+				.connectionId(reading.getConnectionId())
+				.consumerEmail(reading.getConsumerEmail())
+				.utilityType(reading.getUtilityType())
+				.previousReading(reading.getPreviousReading())
+				.currentReading(reading.getCurrentReading())
+				.unitsConsumed(reading.getUnitsConsumed())
+				.readingDate(reading.getReadingDate())
+				.billingCycle(reading.getBillingCycle())
+				.status(reading.getStatus())
+				.build();
 	}
 }

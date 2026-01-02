@@ -26,6 +26,7 @@ public class MeterReading {
 
     @NotBlank
     private String connectionId;
+    private String consumerEmail;
 
     @NotNull
     private UtilityType utilityType;

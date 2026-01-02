@@ -14,5 +14,5 @@ public class ConnectionDTO {
     private ConnectionStatus status;
     
     private String consumerId;
-
+    private String consumerEmail;
 }

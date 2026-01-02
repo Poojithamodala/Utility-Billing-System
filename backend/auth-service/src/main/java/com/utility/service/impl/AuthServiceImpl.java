@@ -84,8 +84,15 @@ public class AuthServiceImpl implements AuthService {
 					// Password mismatch
 					if (!passwordEncoder.matches(password, user.getPassword())) {
 						user.setFailedAttempts(user.getFailedAttempts() + 1);
-						return Mono.error(
-								new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+//						return Mono.error(
+//								new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+						return userRepository.save(user)
+						        .then(Mono.error(
+						            new ResponseStatusException(
+						                HttpStatus.UNAUTHORIZED,
+						                "Invalid username or password"
+						            )
+						        ));
 					}
 					user.setFailedAttempts(0);
 					String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
@@ -113,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public Mono<Void> activateConsumer(ActivateRequest request) {
-
+		
 		if (request == null || request.getEmail() == null || request.getEmail().isBlank()
 				|| request.getPassword() == null || request.getPassword().isBlank()) {
 

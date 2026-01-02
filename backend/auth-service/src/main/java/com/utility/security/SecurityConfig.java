@@ -3,37 +3,38 @@ package com.utility.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
-@RequiredArgsConstructor
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain security(ServerHttpSecurity http) {
 
         return http
-                .csrf(csrf -> csrf.disable()) 
-                .authorizeExchange(exchange -> exchange
-                		.pathMatchers(HttpMethod.POST, "/auth/internal/**").hasRole("ADMIN")
-                		.pathMatchers(HttpMethod.POST, "/auth/activate").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
-                        .anyExchange().authenticated()
-                )
-                .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-                .build();
-    }
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+            // Auth Service does NOT validate JWT
+            .authorizeExchange(ex -> ex
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Public endpoints
+                .pathMatchers(
+                    "/auth/login",
+                    "/auth/register",
+                    "/auth/activate"
+                ).permitAll()
+
+                // Internal endpoint (Gateway already enforces ADMIN)
+                .pathMatchers("/auth/internal/**").permitAll()
+
+                // Everything else is allowed (no resource protection here)
+                .anyExchange().permitAll()
+            )
+            .build();
     }
 }

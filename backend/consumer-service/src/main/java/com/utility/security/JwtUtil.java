@@ -6,7 +6,6 @@ import java.security.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -16,23 +15,19 @@ public class JwtUtil {
     @Value("${spring.security.jwt.secret}")
     private String secret;
 
-    private Key getSigningKey() {
+    @Value("${spring.security.jwt.expiration}")
+    private long expiration;
+
+    private Key key() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
-
-    public Claims validateToken(String token) {
+    
+    public String extractUsername(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(key())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public String getUsername(String token) {
-        return validateToken(token).getSubject();
-    }
-
-    public String getRole(String token) {
-        return validateToken(token).get("role", String.class);
+                .getBody()
+                .getSubject();
     }
 }

@@ -14,28 +14,12 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
-
-	private final JwtAuthenticationFilter jwtFilter;
-
-	@Bean
-	public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
-
-		return http.csrf(ServerHttpSecurity.CsrfSpec::disable).httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-				.formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-
-				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-
-				.authorizeExchange(exchange -> exchange
-						.pathMatchers(HttpMethod.POST, "/meter-readings").hasRole("BILLING_OFFICER")
-						.pathMatchers(HttpMethod.GET, "/meter-readings").hasRole("ADMIN")
-						.pathMatchers(HttpMethod.GET, "/meter-readings/connection/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")
-						.pathMatchers(HttpMethod.GET, "/meter-readings/*").hasAnyRole("ADMIN", "BILLING_OFFICER")
-						.anyExchange().permitAll()
-				)
-				.addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-				.build();
-	}
+    @Bean
+    SecurityWebFilterChain filter(ServerHttpSecurity http) {
+    	return http
+    			.csrf(ServerHttpSecurity.CsrfSpec::disable)
+                   .authorizeExchange(ex -> ex.anyExchange().permitAll())
+                   .build();
+    }
 }

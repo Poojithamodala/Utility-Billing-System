@@ -2,6 +2,7 @@ package com.utility.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,15 +34,7 @@ public class JwtUtil {
     }
 
     public String getRole(String token) {
-        return extractAllClaims(token).get("role", String.class);
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        List<String> roles = extractAllClaims(token).get("roles", List.class);
+        return roles != null && !roles.isEmpty() ? roles.get(0) : null;
     }
 }

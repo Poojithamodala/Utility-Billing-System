@@ -46,4 +46,12 @@ public class ConsumerClient {
                 return Mono.empty(); // consumer exists
             });
     }
+    
+    public Mono<ConsumerDTO> getConsumerById(String consumerId, String authHeader) {
+        return consumerWebClient.get()
+            .uri("/consumers/{id}", consumerId)
+            .header(HttpHeaders.AUTHORIZATION, authHeader)
+            .retrieve()
+            .bodyToMono(ConsumerDTO.class);
+    }
 }

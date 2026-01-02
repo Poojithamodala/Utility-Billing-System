@@ -27,25 +27,17 @@ public class TariffServiceImpl implements TariffService {
 
 	@Override
 	public Mono<TariffPlan> createTariff(TariffPlan tariff) {
-
 		List<TariffSlab> slabs = tariff.getSlabs();
-
 		slabs.sort(Comparator.comparingInt(TariffSlab::getFromUnit));
-
 		if (slabs.get(0).getFromUnit() != 0) {
 			return Mono.error(new IllegalArgumentException("First slab must start from unit 0"));
 		}
-
 		Set<String> ranges = new HashSet<>();
-
 		for (int i = 0; i < slabs.size(); i++) {
-
 			TariffSlab slab = slabs.get(i);
-
 			if (slab.getFromUnit() > slab.getToUnit()) {
 				return Mono.error(new IllegalArgumentException("Invalid slab range"));
 			}
-
 			String key = slab.getFromUnit() + "-" + slab.getToUnit();
 			if (!ranges.add(key)) {
 				return Mono.error(new IllegalArgumentException("Duplicate slab ranges not allowed"));
@@ -53,41 +45,31 @@ public class TariffServiceImpl implements TariffService {
 
 			if (i > 0) {
 				TariffSlab prev = slabs.get(i - 1);
-
 				if (slab.getFromUnit() <= prev.getToUnit()) {
 					return Mono.error(new IllegalArgumentException("Slab overlap detected"));
 				}
-
 				if (slab.getFromUnit() != prev.getToUnit() + 1) {
 					return Mono.error(new IllegalArgumentException("Slabs must be continuous"));
 				}
 			}
 		}
-		return repository
-			    .existsByUtilityTypeAndName(
-			        tariff.getUtilityType(), tariff.getName())
-			    .flatMap(exists -> {
-			        if (exists) {
-			            return Mono.error(new IllegalArgumentException(
-			                "Tariff plan already exists for this utility"
-			            ));
-			        }
-			        return repository.save(tariff);
-			    });
+		return repository.existsByUtilityTypeAndName(tariff.getUtilityType(), tariff.getName()).flatMap(exists -> {
+			if (exists) {
+				return Mono.error(new IllegalArgumentException("Tariff plan already exists for this utility"));
+			}
+			return repository.save(tariff);
+		});
 	}
 
 	@Override
 	public Flux<TariffPlan> getTariffsByUtility(UtilityType utilityType) {
 		return repository.findByUtilityType(utilityType);
 	}
-	
-	@Override
-    public Mono<TariffPlan> getTariffById(String id) {
 
-        return repository.findById(id)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Tariff plan not found"
-                )));
-    }
+	@Override
+	public Mono<TariffPlan> getTariffById(String id) {
+
+		return repository.findById(id)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Tariff plan not found")));
+	}
 }

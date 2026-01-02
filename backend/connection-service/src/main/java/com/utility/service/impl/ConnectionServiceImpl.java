@@ -33,7 +33,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 		return consumerClient.validateConsumerExists(request.getConsumerId(), authHeader)
 
-				// 1️⃣ Tariff validation
+				//Tariff validation
 				.then(tariffRepository.findById(request.getTariffPlanId()).switchIfEmpty(
 						Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Tariff plan not found"))))
 				.flatMap(tariff -> {
@@ -44,7 +44,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 					return Mono.just(request);
 				})
 
-				// 2️⃣ Meter uniqueness
+				//Meter uniqueness
 				.flatMap(req -> repository.existsByUtilityTypeAndMeterNumber(req.getUtilityType(), req.getMeterNumber())
 						.flatMap(meterExists -> {
 							if (meterExists) {
@@ -54,7 +54,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 							return Mono.just(req);
 						}))
 
-				// 3️⃣ One ACTIVE connection per utility
+				//One ACTIVE connection per utility
 				.flatMap(req -> repository.existsByConsumerIdAndUtilityTypeAndStatus(req.getConsumerId(),
 						req.getUtilityType(), ConnectionStatus.ACTIVE).flatMap(activeExists -> {
 							if (activeExists) {
@@ -64,41 +64,41 @@ public class ConnectionServiceImpl implements ConnectionService {
 							return Mono.just(req);
 						}))
 
-				// 4️⃣ Save
-				.flatMap(req -> {
-					Connection connection = Connection.builder()
-							.consumerId(req.getConsumerId())
-							.utilityType(req.getUtilityType())
-							.meterNumber(req.getMeterNumber())
-							.tariffPlanId(req.getTariffPlanId())
-							.billingCycle(req.getBillingCycle())
-							.status(ConnectionStatus.ACTIVE)
-							.connectionDate(LocalDate.now())
-							.build();
-
-					return repository.save(connection);
-				})
-
-				// 5️⃣ Response
-				.map(this::toResponse);
+				//Save
+				.flatMap(req ->
+			    consumerClient.getConsumerById(req.getConsumerId(), authHeader)
+			        .map(consumer -> Connection.builder()
+			            .consumerId(req.getConsumerId())
+			            .consumerEmail(consumer.getEmail()) 
+			            .utilityType(req.getUtilityType())
+			            .meterNumber(req.getMeterNumber())
+			            .tariffPlanId(req.getTariffPlanId())
+			            .billingCycle(req.getBillingCycle())
+			            .status(ConnectionStatus.ACTIVE)
+			            .connectionDate(LocalDate.now())
+			            .build()
+			        )
+			        .flatMap(repository::save)
+			)
+			.map(this::toResponse);
 	}
 
 	@Override
 	public Flux<ConnectionResponse> getConnectionsByConsumer(String consumerId) {
 
-		// 1️⃣ Validate consumer exists (has at least one connection ever)
+		//Validate consumer exists (has at least one connection ever)
 		return repository.findByConsumerId(consumerId)
 				.switchIfEmpty(Flux.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
 						"No connections found for the given consumer")))
 
-				// 2️⃣ Return only ACTIVE connections
+				//Return only ACTIVE connections
 				.filter(connection -> connection.getStatus() == ConnectionStatus.ACTIVE)
 
-				// 3️⃣ Handle case where consumer has only inactive connections
+				//Handle case where consumer has only inactive connections
 				.switchIfEmpty(Flux.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
 						"No active connections found for the given consumer")))
 
-				// 4️⃣ Map to response
+				//Map to response
 				.map(this::toResponse);
 	}
 
@@ -107,14 +107,14 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 		return repository.findAll()
 
-				// 1️⃣ Filter only ACTIVE connections
+				//Filter only ACTIVE connections
 				.filter(connection -> connection.getStatus() == ConnectionStatus.ACTIVE)
 
-				// 2️⃣ If DB has no active connections
+				//If DB has no active connections
 				.switchIfEmpty(
 						Flux.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "No active connections found")))
 
-				// 3️⃣ Map to response
+				//Map to response
 				.map(this::toResponse);
 	}
 
@@ -126,8 +126,16 @@ public class ConnectionServiceImpl implements ConnectionService {
 	}
 
 	private ConnectionResponse toResponse(Connection c) {
-		return ConnectionResponse.builder().id(c.getId()).consumerId(c.getConsumerId()).utilityType(c.getUtilityType())
-				.meterNumber(c.getMeterNumber()).tariffPlanId(c.getTariffPlanId()).billingCycle(c.getBillingCycle())
-				.status(c.getStatus()).connectionDate(c.getConnectionDate()).build();
+		return ConnectionResponse.builder()
+				.id(c.getId())
+				.consumerId(c.getConsumerId())
+				.consumerEmail(c.getConsumerEmail())
+				.utilityType(c.getUtilityType())
+				.meterNumber(c.getMeterNumber())
+				.tariffPlanId(c.getTariffPlanId())
+				.billingCycle(c.getBillingCycle())
+				.status(c.getStatus())
+				.connectionDate(c.getConnectionDate())
+				.build();
 	}
 }

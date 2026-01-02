@@ -26,4 +26,6 @@ public class Connection {
     private BillingCycleType billingCycle;
     private ConnectionStatus status;
     private LocalDate connectionDate;
+    
+    private String consumerEmail;
 }

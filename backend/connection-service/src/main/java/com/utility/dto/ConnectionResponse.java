@@ -21,4 +21,6 @@ public class ConnectionResponse {
     private BillingCycleType billingCycle;
     private ConnectionStatus status;
     private LocalDate connectionDate;
+    
+    private String consumerEmail;
 }

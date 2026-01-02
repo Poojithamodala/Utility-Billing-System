@@ -25,27 +25,30 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+	private final AuthService authService;
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Map<String, String>> register(@Valid @RequestBody RegisterRequest request) {
-        return authService.register(request).then(Mono.just(Map.of("message", "User registered successfully")));
-    }
+	@PostMapping("/register")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Mono<Map<String, String>> register(@Valid @RequestBody RegisterRequest request) {
 
-    @PostMapping("/login")
-    public Mono<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
-    }
-    
-    @PostMapping("/internal/create-consumer")
-    public Mono<Void> createConsumerUser(@RequestBody ConsumerAuthCreateRequest request) {
-        return authService.createConsumerUser(request);
-    }
-    
-    @PostMapping("/activate")
-    public Mono<Map<String, String>> activate(@Valid @RequestBody ActivateRequest request) {
-        return authService.activateConsumer(request)
-            .thenReturn(Map.of("message", "Account activated successfully"));
-    }
+		return authService.register(request).thenReturn(Map.of("message", "User registered successfully"));
+	}
+
+	@PostMapping("/login")
+	public Mono<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+
+		return authService.login(request);
+	}
+
+	@PostMapping("/internal/create-consumer")
+	public Mono<Void> createConsumerUser(@RequestBody ConsumerAuthCreateRequest request) {
+
+		return authService.createConsumerUser(request);
+	}
+
+	@PostMapping("/activate")
+	public Mono<Map<String, String>> activate(@Valid @RequestBody ActivateRequest request) {
+
+		return authService.activateConsumer(request).thenReturn(Map.of("message", "Account activated successfully"));
+	}
 }

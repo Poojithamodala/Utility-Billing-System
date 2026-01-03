@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.utility.dto.ConsumerRegistrationRequestResponse;
 import com.utility.dto.ConsumerRequest;
 import com.utility.dto.ConsumerResponse;
+import com.utility.dto.RejectConsumerRequest;
 import com.utility.security.JwtUtil;
 import com.utility.service.ConsumerService;
 
@@ -35,6 +37,30 @@ public class ConsumerController {
 
 	private final ConsumerService consumerService;
 	private final JwtUtil jwtUtil;
+
+	@PostMapping("/request")
+	public Mono<Map<String, String>> requestConsumerRegistration(@Valid @RequestBody ConsumerRequest request) {
+		return consumerService.submitRegistrationRequest(request)
+				.thenReturn(Map.of("message", "Registration request submitted"));
+	}
+	
+	@GetMapping("/requests")
+	public Flux<ConsumerRegistrationRequestResponse> getAllRequests(Authentication authentication) {
+		return consumerService.getAllRegistrationRequests();
+	}
+	
+	@PostMapping("/requests/{id}/approve")
+	public Mono<Map<String, String>> approveRequest(@PathVariable String id, ServerWebExchange exchange) {
+		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+		return consumerService.approveRequest(id, authHeader)
+				.thenReturn(Map.of("message", "Consumer approved successfully"));
+	}
+	
+	@PostMapping("/requests/{requestId}/reject")
+	public Mono<Map<String, String>> rejectRequest(@PathVariable String requestId,  @Valid @RequestBody RejectConsumerRequest request, Authentication authentication) {
+		return consumerService.rejectRequest(requestId, request.getReason())
+				.thenReturn(Map.of("message", "Consumer registration request rejected"));
+	}
 
 	// create consumer
 	@PostMapping
@@ -77,16 +103,15 @@ public class ConsumerController {
 	}
 
 	@GetMapping("/profile")
-	public Mono<ConsumerResponse> myProfile(
-	        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+	public Mono<ConsumerResponse> myProfile(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
-	    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-	        return Mono.error(new RuntimeException("Missing Authorization header"));
-	    }
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			return Mono.error(new RuntimeException("Missing Authorization header"));
+		}
 
-	    String token = authHeader.substring(7);
-	    String username = jwtUtil.extractUsername(token);
+		String token = authHeader.substring(7);
+		String username = jwtUtil.extractUsername(token);
 
-	    return consumerService.getMyProfile(username);
+		return consumerService.getMyProfile(username);
 	}
 }

@@ -5,6 +5,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.utility.dto.BillGeneratedEvent;
+import com.utility.dto.ConsumerApprovedEvent;
+import com.utility.dto.ConsumerRejectedEvent;
 import com.utility.dto.PaymentSuccessEvent;
 import com.utility.service.EmailService;
 
@@ -53,6 +55,39 @@ public class EmailServiceImpl implements EmailService {
 
         mailSender.send(message);
         log.info("Payment success email sent to {}", event.getConsumerEmail());
+    }
+    
+    @Override
+    public void sendApprovalEmail(ConsumerApprovedEvent event) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(event.getEmail());
+        message.setSubject("Your Account Has Been Approved.");
+        message.setText(
+            "Hello " + event.getName() + ",\n\n" +
+            "Your account has been approved by the admin.\n" +
+            "You can now activate your account and log in.\n\n" +
+            "Regards,\nUtility Billing Team"
+        );
+
+        mailSender.send(message);
+    }
+    
+    @Override
+    public void sendRejectionEmail(ConsumerRejectedEvent event) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(event.getEmail());
+        message.setSubject("Account Registration Update");
+        message.setText(
+            "Hello " + event.getName() + ",\n\n" +
+            "Unfortunately, your registration request was rejected.\n" +
+            "Reason: " + event.getReason() + "\n\n" +
+            "You may contact support for more information.\n\n" +
+            "Regards,\nUtility Billing Team"
+        );
+
+        mailSender.send(message);
     }
 
 }

@@ -4,6 +4,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.utility.dto.BillGeneratedEvent;
+import com.utility.dto.ConsumerApprovedEvent;
+import com.utility.dto.ConsumerRejectedEvent;
 import com.utility.dto.PaymentSuccessEvent;
 import com.utility.service.EmailService;
 
@@ -38,4 +40,20 @@ public class BillGeneratedListener {
 	        log.error("Failed to send payment success email", e);
 	    }
 	}
+	
+	@KafkaListener(
+		    topics = "consumer-approved-topic",
+		    groupId = "notification-group"
+		)
+		public void handleConsumerApproved(ConsumerApprovedEvent event) {
+		    emailService.sendApprovalEmail(event);
+		}
+	
+	@KafkaListener(
+		    topics = "consumer-rejected-topic",
+		    groupId = "notification-group"
+		)
+		public void handleConsumerRejected(ConsumerRejectedEvent event) {
+		    emailService.sendRejectionEmail(event);
+		}
 }

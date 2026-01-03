@@ -3,6 +3,7 @@ package com.utility.service.impl;
 import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -10,11 +11,13 @@ import com.utility.config.ConnectionClient;
 import com.utility.config.MeterReadingClient;
 import com.utility.config.TariffClient;
 import com.utility.dto.BillGenerateRequest;
+import com.utility.dto.BillGeneratedEvent;
 import com.utility.dto.BillResponse;
 import com.utility.dto.ConnectionDTO;
 import com.utility.dto.ConnectionStatus;
 import com.utility.dto.MeterReadingDTO;
 import com.utility.dto.TariffPlanDTO;
+import com.utility.kafka.KafkaTopics;
 import com.utility.model.Bill;
 import com.utility.model.BillStatus;
 import com.utility.repository.BillRepository;
@@ -34,6 +37,7 @@ public class BillingServiceImpl implements BillingService {
     private final ConnectionClient connectionClient;
     private final TariffClient tariffClient;
     private final TariffCalculator tariffCalculator;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
     public Mono<BillResponse> generateBill(
@@ -90,7 +94,8 @@ public class BillingServiceImpl implements BillingService {
             })
 
             //Calculate bill & save
-            .flatMap(tuple -> {
+            .flatMap
+            (tuple -> {
 
                 MeterReadingDTO reading = tuple.getT1();
                 ConnectionDTO connection = tuple.getT2();
@@ -106,6 +111,7 @@ public class BillingServiceImpl implements BillingService {
                 Bill bill = Bill.builder()
                         .consumerId(connection.getConsumerId())
                         .connectionId(connection.getId())
+                        .consumerEmail(connection.getConsumerEmail())
                         .utilityType(connection.getUtilityType())
                         .meterReadingId(reading.getId())
                         .unitsConsumed(reading.getUnitsConsumed())
@@ -124,6 +130,20 @@ public class BillingServiceImpl implements BillingService {
             .markReadingAsBilled(bill.getMeterReadingId(), authHeader)
             .thenReturn(bill)
             )
+            .doOnSuccess(bill -> {
+
+                BillGeneratedEvent event = new BillGeneratedEvent(
+                        bill.getId(),
+                        bill.getConsumerEmail(),
+                        bill.getTotalAmount(),
+                        bill.getDueDate()
+                );
+
+                kafkaTemplate.send(
+                        KafkaTopics.BILL_GENERATED,
+                        event
+                );
+            })
             .map(this::toResponse);
     }
 
@@ -155,6 +175,7 @@ public class BillingServiceImpl implements BillingService {
                 .id(bill.getId())
                 .consumerId(bill.getConsumerId())
                 .connectionId(bill.getConnectionId())
+                .consumerEmail(bill.getConsumerEmail())
                 .utilityType(bill.getUtilityType())
                 .unitsConsumed(bill.getUnitsConsumed())
                 .totalAmount(bill.getTotalAmount())

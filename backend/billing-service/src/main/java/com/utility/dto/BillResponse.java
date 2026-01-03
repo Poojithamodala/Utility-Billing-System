@@ -15,6 +15,7 @@ public class BillResponse {
     private String id;
     private String consumerId;
     private String connectionId;
+    private String consumerEmail;
     private UtilityType utilityType;
 
     private double unitsConsumed;

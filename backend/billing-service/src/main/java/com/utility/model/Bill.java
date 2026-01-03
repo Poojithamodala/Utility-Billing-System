@@ -22,6 +22,7 @@ public class Bill {
 
     private String consumerId;
     private String connectionId;
+    private String consumerEmail;
 
     private UtilityType utilityType;
 

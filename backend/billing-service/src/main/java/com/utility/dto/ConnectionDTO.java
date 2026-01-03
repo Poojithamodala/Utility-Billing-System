@@ -12,4 +12,6 @@ public class ConnectionDTO {
     private String tariffPlanId;
     private BillingCycle billingCycle;
     private ConnectionStatus status;
+    
+    private String consumerEmail;
 }

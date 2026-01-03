@@ -1,7 +1,5 @@
 package com.utility.dto;
 
-import com.utility.model.Role;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

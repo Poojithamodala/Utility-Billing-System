@@ -57,7 +57,7 @@ public class SecurityConfig {
                 
                 //meter reading service
                 .pathMatchers(HttpMethod.POST, "/meter-reading-service/meter-readings").hasRole("BILLING_OFFICER")
-				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings").hasRole("ADMIN")
+				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings").hasAnyRole("ADMIN", "BILLING_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/connection/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/*").hasAnyRole("ADMIN", "BILLING_OFFICER")
 				

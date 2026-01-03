@@ -30,25 +30,21 @@ public class AuthController {
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<Map<String, String>> register(@Valid @RequestBody RegisterRequest request) {
-
 		return authService.register(request).thenReturn(Map.of("message", "User registered successfully"));
 	}
 
 	@PostMapping("/login")
 	public Mono<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-
 		return authService.login(request);
 	}
 
 	@PostMapping("/internal/create-consumer")
 	public Mono<Void> createConsumerUser(@RequestBody ConsumerAuthCreateRequest request) {
-
 		return authService.createConsumerUser(request);
 	}
 
 	@PostMapping("/activate")
 	public Mono<Map<String, String>> activate(@Valid @RequestBody ActivateRequest request) {
-
 		return authService.activateConsumer(request).thenReturn(Map.of("message", "Account activated successfully"));
 	}
 }

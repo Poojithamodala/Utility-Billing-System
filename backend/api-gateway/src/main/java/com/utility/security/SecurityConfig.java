@@ -40,6 +40,10 @@ public class SecurityConfig {
                 
 
                 // Consumer Service
+                .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/request").permitAll()
+                .pathMatchers(HttpMethod.GET, "/consumer-service/consumers/requests").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/requests/{id}/approve").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/requests/{id}/reject").hasRole("ADMIN")
                 .pathMatchers("/consumer-service/consumers/profile").authenticated()
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.PUT, "/consumer-service/consumers/**").hasRole("ADMIN")

@@ -11,5 +11,5 @@ public class BillDTO {
     private double totalAmount;
     private BillStatus status;
     private LocalDate dueDate;
-    
+    private String consumerEmail;
 }

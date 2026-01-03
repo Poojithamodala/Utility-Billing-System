@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -11,6 +12,7 @@ import com.utility.config.BillingClient;
 import com.utility.dto.BillStatus;
 import com.utility.dto.PaymentRequest;
 import com.utility.dto.PaymentResponse;
+import com.utility.dto.PaymentSuccessEvent;
 import com.utility.model.Payment;
 import com.utility.model.PaymentStatus;
 import com.utility.repository.PaymentRepository;
@@ -26,6 +28,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 	private final PaymentRepository repository;
 	private final BillingClient billingClient;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
 	public Mono<PaymentResponse> makePayment(PaymentRequest request, String authHeader) {
@@ -62,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
 						Payment payment = Payment.builder()
 								.billId(bill.getId())
 								.consumerId(bill.getConsumerId())
+								.consumerEmail(bill.getConsumerEmail())
 								.amountPaid(request.getAmount())
 								.paymentMode(request.getPaymentMode())
 								.paymentStatus(PaymentStatus.SUCCESS)
@@ -70,12 +74,23 @@ public class PaymentServiceImpl implements PaymentService {
 								.build();
 
 						return repository.save(payment).flatMap(savedPayment -> {
-							double newOutstanding = remaining - request.getAmount();
-							BillStatus newStatus = newOutstanding == 0 ? BillStatus.PAID : BillStatus.DUE;
 
-							// Update bill status
-							return billingClient.updateBillStatus(bill.getId(), newStatus, authHeader)
-									.thenReturn(savedPayment);
+						    double newOutstanding = remaining - request.getAmount();
+						    BillStatus newStatus = newOutstanding == 0 ? BillStatus.PAID : BillStatus.DUE;
+
+						    return billingClient.updateBillStatus(bill.getId(), newStatus, authHeader)
+						        .then(Mono.fromRunnable(() ->
+						            kafkaTemplate.send(
+						                "payment-success-topic",
+						                new PaymentSuccessEvent(
+						                    bill.getId(),
+						                    bill.getConsumerEmail(),
+						                    savedPayment.getAmountPaid(),
+						                    savedPayment.getPaymentDate()
+						                )
+						            )
+						        ))
+						        .thenReturn(savedPayment);
 						});
 					});
 				})
@@ -95,9 +110,15 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	private PaymentResponse toResponse(Payment payment) {
-		return PaymentResponse.builder().paymentId(payment.getId()).billId(payment.getBillId())
-				.amountPaid(payment.getAmountPaid()).paymentMode(payment.getPaymentMode())
-				.paymentStatus(payment.getPaymentStatus()).paymentDate(payment.getPaymentDate())
-				.referenceNumber(payment.getReferenceNumber()).build();
+		return PaymentResponse.builder()
+				.paymentId(payment.getId())
+				.consumerEmail(payment.getConsumerEmail())
+				.billId(payment.getBillId())
+				.amountPaid(payment.getAmountPaid())
+				.paymentMode(payment.getPaymentMode())
+				.paymentStatus(payment.getPaymentStatus())
+				.paymentDate(payment.getPaymentDate())
+				.referenceNumber(payment.getReferenceNumber())
+				.build();
 	}
 }

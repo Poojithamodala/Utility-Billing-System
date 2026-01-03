@@ -22,6 +22,7 @@ public class Payment {
 
     private String billId;
     private String consumerId;
+    private String consumerEmail;
 
     private double amountPaid;
 

@@ -57,22 +57,22 @@ public class EmailServiceImpl implements EmailService {
         log.info("Payment success email sent to {}", event.getConsumerEmail());
     }
     
-    @Override
-    public void sendApprovalEmail(ConsumerApprovedEvent event) {
+	@Override
+	public void sendApprovalEmail(ConsumerApprovedEvent event) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(event.getEmail());
-        message.setSubject("Your Account Has Been Approved.");
-        message.setText(
-            "Hello " + event.getName() + ",\n\n" +
-            "Your account has been approved by the admin.\n" +
-            "You can now activate your account and log in.\n\n" +
-            "Regards,\nUtility Billing Team"
-        );
+		String activationLink = "http://localhost:4200/activate?email=" + event.getEmail();
 
-        mailSender.send(message);
-    }
-    
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(event.getEmail());
+		message.setSubject("Your Account Has Been Approved – Activate Now");
+
+		message.setText("Hello " + event.getName() + ",\n\n" + "Your account has been approved by the admin.\n\n"
+				+ "Please activate your account using the link below:\n" + activationLink + "\n\n"
+				+ "This will allow you to set your password and log in.\n\n" + "Regards,\n" + "Utility Billing Team");
+
+		mailSender.send(message);
+	}
+
     @Override
     public void sendRejectionEmail(ConsumerRejectedEvent event) {
 

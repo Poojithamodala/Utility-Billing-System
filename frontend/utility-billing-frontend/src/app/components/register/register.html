@@ -1,0 +1,55 @@
+<div class="register-container">
+
+  <div class="register-header">
+    <h1>Create Consumer Account</h1>
+    <p>Submit your details for admin approval</p>
+  </div>
+
+  <div class="register-card">
+
+    <form (ngSubmit)="submit()">
+
+      <input
+        type="text"
+        placeholder="Full Name"
+        [(ngModel)]="form.name"
+        name="name"
+        required />
+
+      <input
+        type="email"
+        placeholder="Email Address"
+        [(ngModel)]="form.email"
+        name="email"
+        required />
+
+      <input
+        type="text"
+        placeholder="Phone Number"
+        [(ngModel)]="form.phone"
+        name="phone"
+        required />
+
+      <textarea
+        placeholder="Address"
+        [(ngModel)]="form.address"
+        name="address"
+        required>
+      </textarea>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Submitting...' : 'Submit Registration' }}
+      </button>
+
+    </form>
+
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <p class="info">
+      After approval, you will receive an email to activate your account.
+    </p>
+
+  </div>
+
+</div>

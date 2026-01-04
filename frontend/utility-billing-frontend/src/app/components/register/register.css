@@ -1,0 +1,89 @@
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7f9fc, #eef6f9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.register-header {
+  position: absolute;
+  top: 60px;
+  text-align: center;
+}
+
+.register-header h1 {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.register-header p {
+  color: #6b7280;
+}
+
+/* Card */
+.register-card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  width: 420px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* Inputs */
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #5f9ea0;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #5f9ea0;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Messages */
+.success {
+  margin-top: 14px;
+  color: #047857;
+  text-align: center;
+}
+
+.error {
+  margin-top: 14px;
+  color: #dc2626;
+  text-align: center;
+}
+
+.info {
+  margin-top: 18px;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}

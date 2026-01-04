@@ -1,0 +1,82 @@
+.connections-page {
+  padding: 30px;
+  background: #F7F9FC;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 28px;
+  color: #2E2E2E;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #6B7280;
+  margin-bottom: 24px;
+}
+
+.loading {
+  color: #6B7280;
+}
+
+.error {
+  color: #B91C1C;
+  background: #FEE2E2;
+  padding: 12px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.connections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.connection-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease;
+}
+
+.connection-card:hover {
+  transform: translateY(-4px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.utility {
+  font-weight: 600;
+  color: #5F9EA0;
+  font-size: 16px;
+}
+
+.status {
+  background: #DCFCE7;
+  color: #166534;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.details p {
+  margin: 6px 0;
+  color: #2E2E2E;
+}
+
+.details strong {
+  color: #6B7280;
+}
+
+.empty {
+  margin-top: 40px;
+  color: #6B7280;
+  font-style: italic;
+}

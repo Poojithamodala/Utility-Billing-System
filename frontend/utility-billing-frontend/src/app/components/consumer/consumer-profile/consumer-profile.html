@@ -1,0 +1,39 @@
+<div class="profile-container">
+
+  <h1 class="title">My Profile</h1>
+
+  <p *ngIf="loading" class="loading">Loading profile...</p>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+  <!-- Profile Card -->
+  <div class="profile-card" *ngIf="consumer && !loading">
+
+    <div class="row">
+      <span class="label">Name</span>
+      <span class="value">{{ consumer.name }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Username</span>
+      <span class="value">{{ consumer.username }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Email</span>
+      <span class="value">{{ consumer.email }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Phone</span>
+      <span class="value">{{ consumer.phone }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Address</span>
+      <span class="value">{{ consumer.address }}</span>
+    </div>
+
+  </div>
+
+</div>

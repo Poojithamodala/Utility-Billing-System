@@ -1,0 +1,33 @@
+<div class="dashboard">
+
+    <h1 class="title">Welcome Back 👋</h1>
+    <p class="subtitle">Here’s a quick look at your utilities</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Active Connections</h3>
+            <span>{{ summary.activeConnections }}</span>
+        </div>
+
+        <div class="card warning">
+            <h3>Pending Bills</h3>
+            <span>{{ summary.pendingBills }}</span>
+        </div>
+
+        <div class="card highlight">
+            <h3>Total Due</h3>
+            <span>₹ {{ summary.totalDue }}</span>
+        </div>
+
+        <div class="card">
+            <h3>Last Payment</h3>
+            <span *ngIf="summary.lastPayment">
+                ₹ {{ summary.lastPayment?.amount }} <br />
+                <small>{{ summary.lastPayment?.date }}</small>
+            </span>
+            <span *ngIf="!summary.lastPayment">—</span>
+        </div>
+
+    </div>
+</div>

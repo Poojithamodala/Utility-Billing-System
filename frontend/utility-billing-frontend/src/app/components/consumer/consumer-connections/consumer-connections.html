@@ -1,0 +1,35 @@
+<div class="connections-page">
+
+    <h1 class="title">My Connections</h1>
+    <p class="subtitle">Active utility connections linked to your account</p>
+
+    <p class="loading" *ngIf="loading">Loading connections...</p>
+
+    <p class="error" *ngIf="errorMessage && !loading">
+        {{ errorMessage }}
+    </p>
+
+    <div class="connections-grid" *ngIf="!loading && connections.length > 0">
+
+        <div class="connection-card" *ngFor="let c of connections">
+
+            <div class="header">
+                <span class="utility">{{ c.utilityType }}</span>
+                <span class="status">ACTIVE</span>
+            </div>
+
+            <div class="details">
+                <p><strong>Meter Number:</strong> {{ c.meterNumber }}</p>
+                <p><strong>Billing Cycle:</strong> {{ c.billingCycle }}</p>
+                <p><strong>Connected On:</strong> {{ c.connectionDate }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="empty" *ngIf="!loading && connections.length === 0">
+        <p>You don’t have any active connections yet.</p>
+    </div>
+
+</div>

@@ -1,34 +1,13 @@
-<div style="display: flex; height: 100vh;">
-  
-  <!-- LEFT SIDEBAR -->
-  <aside style="
-    width: 240px;
-    background: #7A7978;
-    color: white;
-    padding: 20px;
-  ">
-    <h3>Utility System</h3>
+<div class="layout-container">
 
-    <nav>
-      <a *ngFor="let item of menu"
-         [routerLink]="item.path"
-         style="
-           display: block;
-           padding: 10px;
-           margin: 6px 0;
-           background: #87CBAC;
-           color: black;
-           text-decoration: none;
-           border-radius: 6px;
-         ">
-        {{ item.label }}
-      </a>
-    </nav>
-  </aside>
+  <app-sidebar></app-sidebar>
 
-  <!-- MAIN CONTENT -->
-  <main style="flex: 1; padding: 20px; background: #8DE4FF;">
-    <router-outlet></router-outlet>
-  </main>
+  <div class="main-content">
+    <app-topbar></app-topbar>
+
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 
 </div>

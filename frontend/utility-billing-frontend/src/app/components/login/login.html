@@ -1,29 +1,41 @@
 <div class="login-container">
+
+  <div class="login-header">
+    <h1>Welcome Back</h1>
+    <p>Sign in to continue to Smart Utility</p>
+  </div>
+
   <div class="login-card">
-    <h2>Utility Billing System</h2>
 
     <form (ngSubmit)="login()">
-      <label>Username</label>
       <input
         type="text"
-        [(ngModel)]="credentials.username"
+        placeholder="Username"
+        [(ngModel)]="loginData.username"
         name="username"
-        required
-      />
+        required />
 
-      <label>Password</label>
       <input
         type="password"
-        [(ngModel)]="credentials.password"
+        placeholder="Password"
+        [(ngModel)]="loginData.password"
         name="password"
-        required
-      />
+        required />
 
       <button type="submit" [disabled]="loading">
-        {{ loading ? 'Logging in...' : 'Login' }}
+        {{ loading ? 'Signing in...' : 'Login' }}
       </button>
-
-      <p class="error" *ngIf="error">{{ error }}</p>
     </form>
+
+    <p class="error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <p class="register-link">
+      New here?
+      <a routerLink="/register">Create an account</a>
+    </p>
+
   </div>
+
 </div>

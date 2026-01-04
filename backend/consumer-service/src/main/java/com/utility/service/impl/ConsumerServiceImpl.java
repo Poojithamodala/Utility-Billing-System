@@ -62,7 +62,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     
 	@Override
 	public Flux<ConsumerRegistrationRequestResponse> getAllRegistrationRequests() {
-		return requestRepository.findAll().map(this::mapToResponse);
+		return requestRepository.findByStatus(RequestStatus.PENDING).map(this::mapToResponse);
 	}
 
 	private ConsumerRegistrationRequestResponse mapToResponse(ConsumerRegistrationRequest request) {

@@ -1,0 +1,31 @@
+<div class="sidebar">
+
+  <h2 class="logo">UtilitySys</h2>
+
+  <nav *ngIf="role === 'ADMIN'">
+    <a routerLink="/admin/home" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/admin/requests">Consumer Requests</a>
+    <a routerLink="/admin/consumers" routerLinkActive="active">Manage Consumers</a>
+  </nav>
+
+  <nav *ngIf="role === 'BILLING_OFFICER'">
+    <a routerLink="/billing/home">Dashboard</a>
+    <a routerLink="/billing/readings">Meter Readings</a>
+  </nav>
+
+  <nav *ngIf="role === 'ACCOUNTS_OFFICER'">
+    <a routerLink="/accounts/home">Dashboard</a>
+    <a routerLink="/accounts/payments">Payments</a>
+  </nav>
+
+  <nav *ngIf="role === 'CONSUMER'">
+    <a routerLink="/consumer/home" routerLinkActive="active">Home</a>
+    <a routerLink="/consumer/connections" routerLinkActive="active">My Connections</a>
+    <a routerLink="/consumer/profile" routerLinkActive="active">My Profile</a>
+    <a routerLink="/consumer/bills">My Bills</a>
+    <a routerLink="/consumer/payments">Payments</a>
+  </nav>
+
+  <button class="logout" (click)="logout()">Logout</button>
+
+</div>

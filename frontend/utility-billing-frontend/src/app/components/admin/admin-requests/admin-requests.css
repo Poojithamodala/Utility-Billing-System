@@ -1,0 +1,115 @@
+.requests-page {
+  max-width: 1100px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2E2E2E;
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.state {
+  margin-top: 40px;
+  color: #6B7280;
+}
+
+.requests-grid {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.request-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+}
+
+.info h3 {
+  margin-bottom: 6px;
+  font-size: 16px;
+  color: #2E2E2E;
+}
+
+.info p {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.approve {
+  background: #5F9EA0;
+  color: white;
+}
+
+.reject {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #FFFFFF;
+  padding: 26px;
+  border-radius: 16px;
+  width: 360px;
+}
+
+.modal h3 {
+  margin-bottom: 14px;
+}
+
+textarea {
+  width: 100%;
+  height: 90px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  padding: 10px;
+  font-size: 13px;
+}
+
+.modal-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel {
+  background: #F1F5F9;
+}
+
+.confirm {
+  background: #EF4444;
+  color: white;
+}

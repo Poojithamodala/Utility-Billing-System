@@ -1,0 +1,45 @@
+<div class="requests-page">
+
+  <h1 class="title">Consumer Registration Requests</h1>
+  <p class="subtitle">Review & approve consumer access</p>
+
+  <div *ngIf="loading" class="state">Loading requests...</div>
+  <div *ngIf="!loading && requests.length === 0" class="state">
+    No pending requests.
+  </div>
+
+  <div class="requests-grid">
+    <div class="request-card" *ngFor="let r of requests">
+
+      <div class="info">
+        <h3>{{ r.name }}</h3>
+        <p>{{ r.email }}</p>
+        <p>{{ r.phone }}</p>
+        <p>{{ r.address }}</p>
+      </div>
+
+      <div class="actions">
+        <button class="approve" (click)="approve(r.id)">Approve</button>
+        <button class="reject" (click)="openReject(r.id)">Reject</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Reject -->
+<div class="modal-backdrop" *ngIf="showRejectModal">
+  <div class="modal">
+    <h3>Reject Request</h3>
+    <textarea
+      placeholder="Enter rejection reason"
+      [(ngModel)]="rejectReason"
+    ></textarea>
+
+    <div class="modal-actions">
+      <button class="cancel" (click)="closeModal()">Cancel</button>
+      <button class="confirm" (click)="reject()">Reject</button>
+    </div>
+  </div>
+</div>

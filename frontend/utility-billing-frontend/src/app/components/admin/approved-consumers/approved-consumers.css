@@ -1,0 +1,175 @@
+.consumers-page {
+  padding: 24px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #6B7280;
+  margin-bottom: 24px;
+}
+
+.table-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #F7F9FC;
+}
+
+th {
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #2E2E2E;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.badge.approved {
+  background: rgba(95, 158, 160, 0.15);
+  color: #5F9EA0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.state-text {
+  color: #6B7280;
+  margin-top: 20px;
+}
+
+.error-text {
+  color: #DC2626;
+  margin-top: 20px;
+}
+
+.edit-btn {
+  background: transparent;
+  border: 1px solid #5F9EA0;
+  color: #5F9EA0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #FFFFFF;
+  padding: 24px;
+  border-radius: 16px;
+  width: 420px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.modal h2 {
+  margin-bottom: 16px;
+}
+
+.modal label {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 10px;
+  display: block;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  margin-top: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions .save {
+  background: #5F9EA0;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+.modal-actions .cancel {
+  background: transparent;
+  border: 1px solid #E5E7EB;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+.error {
+  color: #DC2626;
+  margin-top: 10px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.delete-btn {
+  background: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal.danger h2 {
+  color: #DC2626;
+}
+
+.warning {
+  color: #DC2626;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.modal-actions .delete {
+  background: #DC2626;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+}

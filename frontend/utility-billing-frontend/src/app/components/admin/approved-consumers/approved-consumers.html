@@ -1,0 +1,102 @@
+<div class="consumers-page">
+
+    <h1 class="title">Approved Consumers</h1>
+    <p class="subtitle">
+        Consumers successfully onboarded into the system
+    </p>
+
+    <div *ngIf="loading" class="state-text">Loading consumers...</div>
+    <div *ngIf="error" class="error-text">{{ error }}</div>
+
+    <div *ngIf="!loading && consumers.length === 0" class="state-text">
+        No approved consumers found
+    </div>
+
+    <div class="table-card" *ngIf="!loading && consumers.length > 0">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let consumer of consumers">
+                    <td>{{ consumer.name }}</td>
+                    <td>{{ consumer.email }}</td>
+                    <td>{{ consumer.phone }}</td>
+                    <td>{{ consumer.address }}</td>
+                    <td>
+                        <span class="badge approved">Approved</span>
+                    </td>
+                    <td class="actions">
+                        <button class="edit-btn" (click)="openEdit(consumer)">
+                            Edit
+                        </button>
+                        <button class="delete-btn" (click)="confirmDelete(consumer)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="modal-backdrop" *ngIf="editingConsumer">
+            <div class="modal">
+
+                <h2>Edit Consumer</h2>
+
+                <label>Name</label>
+                <input [(ngModel)]="editForm.name" />
+
+                <label>Email</label>
+                <input [(ngModel)]="editForm.email" />
+
+                <label>Phone</label>
+                <input [(ngModel)]="editForm.phone" />
+
+                <label>Address</label>
+                <textarea [(ngModel)]="editForm.address"></textarea>
+
+                <div class="modal-actions">
+                    <button class="cancel" (click)="closeEdit()">Cancel</button>
+                    <button class="save" (click)="updateConsumer()">Save</button>
+                </div>
+
+                <p class="error" *ngIf="editError">{{ editError }}</p>
+
+            </div>
+        </div>
+
+        <div class="modal-backdrop" *ngIf="deletingConsumer">
+            <div class="modal danger">
+
+                <h2>Delete Consumer</h2>
+
+                <p>
+                    Are you sure you want to delete
+                    <strong>{{ deletingConsumer.name }}</strong>?
+                </p>
+
+                <p class="warning">
+                    This action cannot be undone.
+                </p>
+
+                <div class="modal-actions">
+                    <button class="cancel" (click)="cancelDelete()">Cancel</button>
+                    <button class="delete" (click)="deleteConsumer()">Delete</button>
+                </div>
+
+                <p class="error" *ngIf="deleteError">{{ deleteError }}</p>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

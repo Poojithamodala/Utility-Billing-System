@@ -1,0 +1,75 @@
+.activation-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F7F9FC;
+}
+
+.card {
+  background: #FFFFFF;
+  padding: 32px;
+  border-radius: 18px;
+  width: 420px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+h1 {
+  margin-bottom: 6px;
+  color: #2E2E2E;
+}
+
+.subtitle {
+  color: #6B7280;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+label {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 14px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  margin-top: 6px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #5F9EA0;
+}
+
+.activate-btn {
+  width: 100%;
+  margin-top: 24px;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: #5F9EA0;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.activate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin-top: 16px;
+  color: #DC2626;
+  font-size: 13px;
+}
+
+.success {
+  margin-top: 16px;
+  color: #059669;
+  font-size: 13px;
+}

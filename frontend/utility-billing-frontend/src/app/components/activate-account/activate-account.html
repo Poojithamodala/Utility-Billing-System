@@ -1,0 +1,44 @@
+<div class="activation-wrapper">
+
+  <div class="card">
+
+    <h1>Activate Your Account</h1>
+    <p class="subtitle">
+      Set your password to complete account activation
+    </p>
+
+    <label>Email</label>
+    <input
+      type="email"
+      [(ngModel)]="form.email"
+      readonly
+      placeholder="Enter your registered email"
+    />
+
+    <label>Password</label>
+    <input
+      type="password"
+      [(ngModel)]="form.password"
+      placeholder="Create a password"
+    />
+
+    <label>Confirm Password</label>
+    <input
+      type="password"
+      [(ngModel)]="form.confirmPassword"
+      placeholder="Confirm password"
+    />
+
+    <button
+      class="activate-btn"
+      [disabled]="loading"
+      (click)="activate()">
+      {{ loading ? 'Activating...' : 'Activate Account' }}
+    </button>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+    <p class="success" *ngIf="success">{{ success }}</p>
+
+  </div>
+
+</div>

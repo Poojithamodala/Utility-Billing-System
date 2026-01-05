@@ -10,6 +10,8 @@ import { ActivateAccount } from './components/activate-account/activate-account'
 import { ConsumerHome } from './components/consumer/consumer-home/consumer-home';
 import { ConsumerConnections } from './components/consumer/consumer-connections/consumer-connections';
 import { ConsumerProfile } from './components/consumer/consumer-profile/consumer-profile';
+import { ConsumerTariffs } from './components/consumer/consumer-tariffs/consumer-tariffs';
+import { ConsumerBills } from './components/consumer/consumer-bills/consumer-bills';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -31,8 +33,9 @@ export const routes: Routes = [
         children: [
             { path: 'home', component: ConsumerHome },
             { path: 'connections', component: ConsumerConnections},
-            { path: 'profile', component: ConsumerProfile }
-            // { path: 'bills', component: ConsumerBillsComponent }
+            { path: 'profile', component: ConsumerProfile },
+            { path: 'tariffs', component: ConsumerTariffs },
+            { path: 'bills', component: ConsumerBills }
         ]
     }
 

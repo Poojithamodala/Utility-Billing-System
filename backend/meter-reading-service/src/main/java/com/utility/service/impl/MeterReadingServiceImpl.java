@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.utility.config.ConnectionClient;
+import com.utility.config.ConnectionDTO;
 import com.utility.config.ConnectionStatus;
 import com.utility.dto.MeterReadingRequest;
 import com.utility.dto.MeterReadingResponse;
+import com.utility.dto.PendingMeterReadingResponse;
 import com.utility.model.MeterReading;
 import com.utility.model.ReadingStatus;
 import com.utility.repository.MeterReadingRepository;
@@ -105,7 +107,9 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
 								MeterReading reading = MeterReading.builder().connectionId(connection.getId())
 										.consumerEmail(connection.getConsumerEmail())
-										.utilityType(connection.getUtilityType()).previousReading(previous)
+										.utilityType(connection.getUtilityType())
+										.meterNumber(connection.getMeterNumber())
+										.previousReading(previous)
 										.currentReading(current).unitsConsumed(units)
 										.readingDate(request.getReadingDate())
 										.billingCycle(connection.getBillingCycle()).status(ReadingStatus.RECORDED)
@@ -114,6 +118,53 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 								return repository.save(reading);
 							});
 				}).map(this::toResponse);
+	}
+	
+	@Override
+	public Flux<PendingMeterReadingResponse> getPendingMeterReadings(String authHeader) {
+
+	    YearMonth currentMonth = YearMonth.now();
+	    LocalDate startOfMonth = currentMonth.atDay(1);
+	    LocalDate endOfMonth = currentMonth.atEndOfMonth();
+
+	    return connectionClient.getActiveConnections(authHeader)
+
+	        // keep only connections WITHOUT reading this month
+	        .filterWhen(connection ->
+	            repository.existsByConnectionIdAndReadingDateBetween(
+	                connection.getId(),
+	                startOfMonth,
+	                endOfMonth
+	            ).map(exists -> !exists)
+	        )
+
+	        // enrich with last reading info
+	        .flatMap(connection ->
+	            repository.findTopByConnectionIdOrderByReadingDateDesc(connection.getId())
+	                .map(lastReading -> buildPendingResponse(connection, lastReading))
+	                .switchIfEmpty(
+	                    Mono.just(buildPendingResponse(connection, null))
+	                )
+	        );
+	}
+	
+	private PendingMeterReadingResponse buildPendingResponse(
+	        ConnectionDTO connection,
+	        MeterReading lastReading) {
+
+	    return PendingMeterReadingResponse.builder()
+	            .connectionId(connection.getId())
+	            .consumerEmail(connection.getConsumerEmail())
+	            .utilityType(connection.getUtilityType())
+	            .meterNumber(connection.getMeterNumber())
+	            .billingCycle(connection.getBillingCycle())
+	            .lastReadingDate(
+	                lastReading != null ? lastReading.getReadingDate() : null
+	            )
+	            .lastReadingValue(
+	                lastReading != null ? lastReading.getCurrentReading() : 0
+	            )
+	            .build();
 	}
 
 	private String extractToken(String authHeader) {
@@ -195,6 +246,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 				.id(reading.getId())
 				.connectionId(reading.getConnectionId())
 				.consumerEmail(reading.getConsumerEmail())
+				.meterNumber(reading.getMeterNumber())
 				.utilityType(reading.getUtilityType())
 				.previousReading(reading.getPreviousReading())
 				.currentReading(reading.getCurrentReading())

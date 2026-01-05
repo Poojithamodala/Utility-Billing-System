@@ -1,0 +1,23 @@
+<div class="dashboard">
+
+  <h1 class="title">Billing Officer Dashboard</h1>
+  <p class="subtitle">Overview of meter readings and billing status</p>
+
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <h3>{{ stat.title }}</h3>
+      <p class="value">{{ stat.value }}</p>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h2>Responsibilities</h2>
+    <ul>
+      <li>Enter monthly meter readings</li>
+      <li>Validate consumption data</li>
+      <li>Generate bills based on tariff plans</li>
+      <li>Track bill generation status</li>
+    </ul>
+  </div>
+
+</div>

@@ -20,6 +20,7 @@ public class ConnectionRequestEntity {
 	@Id
     private String id;
     private String consumerId;
+    private String consumerEmail;
     private UtilityType utilityType;
     private String tariffPlanId;
     private BillingCycle billingCycle;

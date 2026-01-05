@@ -22,6 +22,7 @@ public class ConnectionRequest {
             regexp = "^[A-Z0-9-]{6,20}$",
             message = "Meter number must be 6–20 chars (A-Z, 0-9, -)"
         )
+    private String consumerEmail;
     private String meterNumber;
 
     @NotBlank(message = "Tariff plan ID is required")

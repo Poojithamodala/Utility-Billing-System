@@ -29,30 +29,35 @@ public class ConnectionServiceImpl implements ConnectionService {
 	private final ConsumerClient consumerClient;
 	
 	@Override
-	public Mono<Connection> approveConnection(ApproveConnectionRequest request, String authHeader) {
-		
-        return consumerClient.getRequest(request.getRequestId(), authHeader)
-                .flatMap(req -> {
+	public Mono<Connection> approveConnection(
+	        ApproveConnectionRequest request,
+	        String authHeader) {
 
-                    Connection connection = Connection.builder()
-                            .consumerId(req.getConsumerId())
-                            .utilityType(req.getUtilityType())
-                            .meterNumber(request.getMeterNumber())
-                            .tariffPlanId(req.getTariffPlanId())
-                            .billingCycle(req.getBillingCycle())
-                            .status(ConnectionStatus.ACTIVE)
-                            .connectionDate(LocalDate.now())
-                            .build();
+	    return consumerClient.getRequest(request.getRequestId(), authHeader)
+	        .flatMap(req ->
+	            consumerClient.getConsumerById(req.getConsumerId(), authHeader)
+	                .flatMap(consumer -> {
 
-                    return repository.save(connection)
-                            .flatMap(saved ->
-                                consumerClient.markApproved(
-                                    request.getRequestId(),
-                                    authHeader
-                                ).thenReturn(saved)
-                            );
-                });
-    }
+	                    Connection connection = Connection.builder()
+	                        .consumerId(req.getConsumerId())
+	                        .consumerEmail(consumer.getEmail()) 
+	                        .utilityType(req.getUtilityType())
+	                        .meterNumber(request.getMeterNumber())
+	                        .tariffPlanId(req.getTariffPlanId())
+	                        .billingCycle(req.getBillingCycle())
+	                        .status(ConnectionStatus.ACTIVE)
+	                        .connectionDate(LocalDate.now())
+	                        .build();
+
+	                    return repository.save(connection)
+	                        .flatMap(saved ->
+	                            consumerClient
+	                                .markApproved(request.getRequestId(), authHeader)
+	                                .thenReturn(saved)
+	                        );
+	                })
+	        );
+	}
 
 	@Override
 	public Mono<ConnectionResponse> createConnection(ConnectionRequest request, String authHeader) {

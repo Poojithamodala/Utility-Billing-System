@@ -42,4 +42,26 @@ export class ConsumerTariffs {
       }
     });
   }
+
+  requestConnection(tariff: any) {
+
+  const payload = {
+    utilityType: tariff.utilityType,
+    tariffPlanId: tariff.id,
+    billingCycle: 'MONTHLY'
+  };
+
+  this.http.post(
+    'http://localhost:8765/consumer-service/consumers/request-connection',
+    payload,
+    { responseType: 'text' } 
+  ).subscribe({
+    next: () => {
+      alert('✅ Connection request submitted successfully, Wait for admin approval');
+    },
+    error: err => {
+      alert(err.error?.message || 'Failed to request connection');
+    }
+  });
+}
 }

@@ -15,7 +15,6 @@
   margin-bottom: 25px;
 }
 
-/* Utility Tabs */
 .utility-tabs {
   display: flex;
   gap: 12px;
@@ -42,7 +41,6 @@
   background: #A8DADC;
 }
 
-/* Cards */
 .tariff-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -68,7 +66,6 @@
   margin-bottom: 15px;
 }
 
-/* Slab Table */
 .slab-table {
   width: 100%;
   border-collapse: collapse;
@@ -89,18 +86,32 @@
   background: #F9FAFB;
 }
 
-/* Info */
 .info-note {
   margin-top: 30px;
   color: #6B7280;
   font-size: 14px;
 }
 
-/* States */
 .loading {
   color: #5F9EA0;
 }
 
 .error {
   color: #E11D48;
+}
+
+.connect-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 10px;
+  background-color: #5f9ea0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.connect-btn:hover {
+  background-color: #4b8b8f;
 }

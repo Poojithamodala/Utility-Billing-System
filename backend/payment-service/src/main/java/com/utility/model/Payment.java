@@ -23,7 +23,8 @@ public class Payment {
     private String billId;
     private String consumerId;
     private String consumerEmail;
-
+    private String utilityType; 
+    
     private double amountPaid;
 
     private PaymentMode paymentMode;     // ONLINE / CASH / UPI

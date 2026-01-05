@@ -1,0 +1,62 @@
+<div class="tariff-page">
+
+  <h1 class="title">Tariff Plans & Pricing</h1>
+  <p class="subtitle">
+    View available utility pricing before requesting a connection
+  </p>
+
+  <!-- Utility Selection -->
+  <div class="utility-tabs">
+    <button
+      *ngFor="let u of utilities"
+      (click)="loadTariffs(u)"
+      [class.active]="u === selectedUtility">
+      {{ u }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading tariff plans...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <!-- Tariff Cards -->
+  <div class="tariff-cards" *ngIf="!loading && tariffs.length">
+
+    <div class="tariff-card" *ngFor="let tariff of tariffs">
+
+      <h3 class="tariff-name">{{ tariff.name }}</h3>
+
+      <div class="tariff-meta">
+        <span><strong>Fixed Charge:</strong> ₹{{ tariff.fixedCharge }}</span>
+        <span><strong>Tax:</strong> {{ tariff.taxPercentage }}%</span>
+      </div>
+
+      <table class="slab-table">
+        <thead>
+          <tr>
+            <th>Units From</th>
+            <th>Units To</th>
+            <th>Rate (₹ / unit)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let slab of tariff.slabs">
+            <td>{{ slab.fromUnit }}</td>
+            <td>{{ slab.toUnit === -1 ? 'Above' : slab.toUnit }}</td>
+            <td>{{ slab.rate }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <div class="info-note">
+    ℹ️ Tariff plans are read-only and managed by the utility authority.
+  </div>
+
+</div>

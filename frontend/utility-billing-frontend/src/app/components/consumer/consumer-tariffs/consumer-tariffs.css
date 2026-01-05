@@ -1,0 +1,106 @@
+.tariff-page {
+  padding: 30px;
+  background: #F7F9FC;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 26px;
+  color: #2E2E2E;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #6B7280;
+  margin-bottom: 25px;
+}
+
+/* Utility Tabs */
+.utility-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.utility-tabs button {
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: 1px solid #E5E7EB;
+  background: #FFFFFF;
+  color: #2E2E2E;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.utility-tabs button.active {
+  background: #5F9EA0;
+  color: #FFFFFF;
+  border-color: #5F9EA0;
+}
+
+.utility-tabs button:hover {
+  background: #A8DADC;
+}
+
+/* Cards */
+.tariff-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.tariff-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.tariff-name {
+  color: #2E2E2E;
+  margin-bottom: 12px;
+}
+
+.tariff-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #6B7280;
+  margin-bottom: 15px;
+}
+
+/* Slab Table */
+.slab-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.slab-table th,
+.slab-table td {
+  padding: 8px;
+  text-align: center;
+}
+
+.slab-table thead {
+  background: #F1F5F9;
+}
+
+.slab-table tbody tr:nth-child(even) {
+  background: #F9FAFB;
+}
+
+/* Info */
+.info-note {
+  margin-top: 30px;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+/* States */
+.loading {
+  color: #5F9EA0;
+}
+
+.error {
+  color: #E11D48;
+}

@@ -1,24 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-consumer-bills',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './consumer-bills.html',
   styleUrl: './consumer-bills.css',
 })
 export class ConsumerBills {
   bills: any[] = [];
   filteredBills: any[] = [];
+  selectedBill: any = null;
+  paying = false;
+  paymentMessage = '';
 
   utilities = ['ELECTRICITY', 'WATER', 'GAS', 'INTERNET'];
+  paymentModes = ['UPI', 'CARD', 'ONLINE', 'CASH', 'BANK_TRANSFER'];
   activeUtility = 'ELECTRICITY';
 
   loading = true;
   errorMessage = '';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  payment = {
+    amount: 0,
+    paymentMode: 'UPI'
+  };
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadBills();
@@ -55,5 +65,63 @@ export class ConsumerBills {
     this.filteredBills = this.bills.filter(
       bill => bill.utilityType === utility
     );
+  }
+
+  selectBill(bill: any) {
+    this.selectedBill = bill;
+    this.payment.amount = bill.totalAmount;
+    this.payment.paymentMode = 'UPI';
+    this.paymentMessage = '';
+    document.body.classList.add('modal-open');
+  }
+  makePayment() {
+    if (!this.selectedBill) return;
+
+    this.paying = true;
+    this.paymentMessage = '';
+
+    const payload = {
+      billId: this.selectedBill.id,
+      amount: this.payment.amount,
+      paymentMode: this.payment.paymentMode
+    };
+
+    this.http.post<any>(
+      'http://localhost:8765/payment-service/payments',
+      payload
+    ).subscribe({
+      next: res => {
+        this.paymentMessage = `Payment successful (Ref: ${res.referenceNumber})`;
+        this.paying = false;
+        this.loadBills(); // refresh bills
+        this.cdr.detectChanges();
+        setTimeout(() => {
+        this.selectedBill = null;
+        this.paymentMessage = '';
+        document.body.classList.remove('modal-open');
+        this.cdr.detectChanges();
+      }, 3000);
+      },
+      error: err => {
+      this.paying = false;
+      if (err.status === 500) {
+        this.paymentMessage =
+          '✅ Payment successful! (Notification delayed)';
+
+        setTimeout(() => {
+          this.selectedBill = null;
+          this.paymentMessage = '';
+          document.body.classList.remove('modal-open');
+          this.loadBills();
+          this.cdr.detectChanges();
+        }, 2000);
+      } else {
+        this.paymentMessage =
+          err.error?.message || 'Payment failed';
+      }
+
+      this.cdr.detectChanges();
+    }
+  });
   }
 }

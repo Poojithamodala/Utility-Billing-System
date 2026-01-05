@@ -14,6 +14,7 @@ public class PaymentResponse {
     private String paymentId;
     private String consumerEmail;
     private String billId;
+    private String utilityType; 
     private double amountPaid;
     private PaymentMode paymentMode;
     private PaymentStatus paymentStatus;

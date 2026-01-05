@@ -22,10 +22,12 @@
 
         <div class="card">
             <h3>Last Payment</h3>
+
             <span *ngIf="summary.lastPayment">
-                ₹ {{ summary.lastPayment?.amount }} <br />
-                <small>{{ summary.lastPayment?.date }}</small>
+                ₹ {{ summary.lastPayment.amount }} <br />
+                <small>{{ summary.lastPayment.date }}</small>
             </span>
+
             <span *ngIf="!summary.lastPayment">—</span>
         </div>
 

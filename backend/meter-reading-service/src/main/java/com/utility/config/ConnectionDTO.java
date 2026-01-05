@@ -12,7 +12,7 @@ public class ConnectionDTO {
     private UtilityType utilityType;
     private BillingCycle billingCycle;
     private ConnectionStatus status;
-    
+    private String meterNumber;
     private String consumerId;
     private String consumerEmail;
 }

@@ -13,6 +13,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.utility.dto.MeterReadingRequest;
 import com.utility.dto.MeterReadingResponse;
+import com.utility.dto.PendingMeterReadingResponse;
 import com.utility.service.MeterReadingService;
 
 import jakarta.validation.Valid;
@@ -32,6 +33,12 @@ public class MeterReadingController {
 	public Mono<MeterReadingResponse> record(@RequestBody @Valid MeterReadingRequest request, ServerWebExchange exchange) {
 		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 		return service.recordReading(request, authHeader);
+	}
+	
+	@GetMapping("/pending")
+	public Flux<PendingMeterReadingResponse> pendingReadings(ServerWebExchange exchange) {
+		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+		return service.getPendingMeterReadings(authHeader);
 	}
 
 	@GetMapping("/connection/{connectionId}")

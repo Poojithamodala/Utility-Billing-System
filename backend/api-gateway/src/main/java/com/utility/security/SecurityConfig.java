@@ -49,10 +49,10 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.PUT, "/consumer-service/consumers/**").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, "/consumer-service/consumers/**").hasRole("ADMIN")
-                .pathMatchers(HttpMethod.GET, "/consumer-service/consumers/**").hasAnyRole("ADMIN", "CONSUMER")
+                .pathMatchers(HttpMethod.GET, "/consumer-service/consumers/**").hasAnyRole("ADMIN", "CONSUMER", "BILLING_OFFICER")
                 
                 //connection service
-                .pathMatchers(HttpMethod.POST, "/connection-service/connections/approve").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, "/connection-service/connections/approve").hasAnyRole("ADMIN", "BILLING_OFFICER")
                 .pathMatchers(HttpMethod.POST, "/connection-service/connections").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.GET, "/connection-service/connections").hasAnyRole("ADMIN", "BILLING_OFFICER")
                 .pathMatchers(HttpMethod.GET, "/connection-service/connections/consumer/**").hasAnyRole("ADMIN","CONSUMER")
@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/connection-service/tariffs/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")
                 
                 //meter reading service
+                .pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/pending").hasRole("BILLING_OFFICER")
                 .pathMatchers(HttpMethod.POST, "/meter-reading-service/meter-readings").hasRole("BILLING_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings").hasAnyRole("ADMIN", "BILLING_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/connection/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")

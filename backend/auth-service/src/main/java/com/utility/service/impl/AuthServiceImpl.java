@@ -84,8 +84,6 @@ public class AuthServiceImpl implements AuthService {
 					// Password mismatch
 					if (!passwordEncoder.matches(password, user.getPassword())) {
 						user.setFailedAttempts(user.getFailedAttempts() + 1);
-//						return Mono.error(
-//								new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 						return userRepository.save(user)
 						        .then(Mono.error(
 						            new ResponseStatusException(

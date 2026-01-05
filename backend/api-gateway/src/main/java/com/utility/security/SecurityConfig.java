@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/consumer-service/consumers/requests").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/requests/{id}/approve").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/requests/{id}/reject").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/request-connection").hasRole("CONSUMER")
                 .pathMatchers("/consumer-service/consumers/profile").authenticated()
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.PUT, "/consumer-service/consumers/**").hasRole("ADMIN")
@@ -51,6 +52,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/consumer-service/consumers/**").hasAnyRole("ADMIN", "CONSUMER")
                 
                 //connection service
+                .pathMatchers(HttpMethod.POST, "/connection-service/connections/approve").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.POST, "/connection-service/connections").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.GET, "/connection-service/connections").hasAnyRole("ADMIN", "BILLING_OFFICER")
                 .pathMatchers(HttpMethod.GET, "/connection-service/connections/consumer/**").hasAnyRole("ADMIN","CONSUMER")

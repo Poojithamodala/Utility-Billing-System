@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.utility.dto.ConnectionRequest;
+
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -53,5 +55,22 @@ public class ConsumerClient {
             .header(HttpHeaders.AUTHORIZATION, authHeader)
             .retrieve()
             .bodyToMono(ConsumerDTO.class);
+    }
+    
+    public Mono<ConnectionRequest> getRequest(String requestId, String authHeader) {
+        return consumerWebClient.get()
+                .uri("/consumers/connection-requests/{id}", requestId)
+                .header(HttpHeaders.AUTHORIZATION, authHeader)
+                .retrieve()
+                .bodyToMono(ConnectionRequest.class);
+    }
+
+    public Mono<Void> markApproved(String requestId, String authHeader) {
+        return consumerWebClient.patch()
+                .uri("/consumers/connection-requests/{id}/status", requestId)
+                .header(HttpHeaders.AUTHORIZATION, authHeader)
+                .bodyValue(RequestStatus.APPROVED)
+                .retrieve()
+                .bodyToMono(Void.class);
     }
 }

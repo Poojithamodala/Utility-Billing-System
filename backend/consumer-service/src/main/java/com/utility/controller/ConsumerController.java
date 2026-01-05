@@ -8,20 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.utility.dto.ConnectionRequestByConsumer;
 import com.utility.dto.ConsumerRegistrationRequestResponse;
 import com.utility.dto.ConsumerRequest;
 import com.utility.dto.ConsumerResponse;
 import com.utility.dto.RejectConsumerRequest;
+import com.utility.dto.RequestStatus;
+import com.utility.model.ConnectionRequestEntity;
 import com.utility.security.JwtUtil;
 import com.utility.service.ConsumerService;
 
@@ -60,6 +65,29 @@ public class ConsumerController {
 	public Mono<Map<String, String>> rejectRequest(@PathVariable String requestId,  @Valid @RequestBody RejectConsumerRequest request, Authentication authentication) {
 		return consumerService.rejectRequest(requestId, request.getReason())
 				.thenReturn(Map.of("message", "Consumer registration request rejected"));
+	}
+	
+	@PostMapping("/request-connection")
+	public Mono<String> requestConnection(@RequestBody @Valid ConnectionRequestByConsumer request,
+			ServerWebExchange exchange) {
+		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+		return consumerService.requestConnection(request, authHeader)
+				.thenReturn("Connection request submitted successfully");
+	}
+	
+	@GetMapping("/connection-requests")
+	public Flux<ConnectionRequestEntity> getPendingRequests(@RequestParam RequestStatus status) {
+		return consumerService.getRequestsByStatus(status);
+	}
+	
+	@GetMapping("/connection-requests/{id}")
+	public Mono<ConnectionRequestEntity> getRequestById(@PathVariable String id) {
+		return consumerService.getRequestById(id);
+	}
+
+	@PatchMapping("/connection-requests/{id}/status")
+	public Mono<Void> updateRequestStatus(@PathVariable String id, @RequestBody RequestStatus status) {
+		return consumerService.updateRequestStatus(id, status);
 	}
 
 	// create consumer

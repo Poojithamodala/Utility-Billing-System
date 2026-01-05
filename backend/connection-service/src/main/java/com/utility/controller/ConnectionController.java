@@ -5,12 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.utility.dto.ApproveConnectionRequest;
 import com.utility.dto.ConnectionRequest;
 import com.utility.dto.ConnectionResponse;
+import com.utility.model.Connection;
 import com.utility.service.ConnectionService;
 
 import jakarta.validation.Valid;
@@ -25,6 +28,12 @@ import reactor.core.publisher.Mono;
 public class ConnectionController {
 
 	private final ConnectionService service;
+	
+	@PostMapping("/approve")
+	public Mono<Connection> approve(@RequestBody @Valid ApproveConnectionRequest request,
+			@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+		return service.approveConnection(request, authHeader);
+	}
 
 	@PostMapping
 	public Mono<ConnectionResponse> create(@RequestBody @Valid ConnectionRequest request, ServerWebExchange exchange) {

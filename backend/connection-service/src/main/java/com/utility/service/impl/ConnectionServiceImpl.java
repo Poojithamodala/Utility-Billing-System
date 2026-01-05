@@ -1,6 +1,5 @@
 package com.utility.service.impl;
 
-
 import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
@@ -8,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.utility.config.ConsumerClient;
+import com.utility.dto.ApproveConnectionRequest;
 import com.utility.dto.ConnectionRequest;
 import com.utility.dto.ConnectionResponse;
 import com.utility.model.Connection;
@@ -27,6 +27,32 @@ public class ConnectionServiceImpl implements ConnectionService {
 	private final ConnectionRepository repository;
 	private final TariffRepository tariffRepository;
 	private final ConsumerClient consumerClient;
+	
+	@Override
+	public Mono<Connection> approveConnection(ApproveConnectionRequest request, String authHeader) {
+		
+        return consumerClient.getRequest(request.getRequestId(), authHeader)
+                .flatMap(req -> {
+
+                    Connection connection = Connection.builder()
+                            .consumerId(req.getConsumerId())
+                            .utilityType(req.getUtilityType())
+                            .meterNumber(request.getMeterNumber())
+                            .tariffPlanId(req.getTariffPlanId())
+                            .billingCycle(req.getBillingCycle())
+                            .status(ConnectionStatus.ACTIVE)
+                            .connectionDate(LocalDate.now())
+                            .build();
+
+                    return repository.save(connection)
+                            .flatMap(saved ->
+                                consumerClient.markApproved(
+                                    request.getRequestId(),
+                                    authHeader
+                                ).thenReturn(saved)
+                            );
+                });
+    }
 
 	@Override
 	public Mono<ConnectionResponse> createConnection(ConnectionRequest request, String authHeader) {

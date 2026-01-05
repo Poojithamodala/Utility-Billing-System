@@ -1,0 +1,52 @@
+<div class="bills-container">
+
+  <h1 class="title">My Bills</h1>
+
+  <!-- Utility -->
+  <div class="tabs">
+    <button
+      *ngFor="let utility of utilities"
+      (click)="filterBills(utility)"
+      [class.active]="utility === activeUtility">
+      {{ utility }}
+    </button>
+  </div>
+
+  <p *ngIf="loading" class="loading">Loading bills...</p>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+  <!-- Bills Table -->
+  <table *ngIf="!loading && filteredBills.length > 0">
+    <thead>
+      <tr>
+        <th>Bill Date</th>
+        <th>Due Date</th>
+        <th>Units</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let bill of filteredBills">
+        <td>{{ bill.billDate }}</td>
+        <td>{{ bill.dueDate }}</td>
+        <td>{{ bill.unitsConsumed }}</td>
+        <td>₹ {{ bill.totalAmount }}</td>
+        <td>
+          <span class="status"
+                [class.paid]="bill.status === 'PAID'"
+                [class.due]="bill.status !== 'PAID'">
+            {{ bill.status }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && filteredBills.length === 0" class="empty">
+    No {{ activeUtility.toLowerCase() }} bills available
+  </p>
+
+</div>

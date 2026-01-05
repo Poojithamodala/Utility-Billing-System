@@ -1,10 +1,10 @@
 <div class="sidebar">
 
   <h2 class="logo">UtilitySys</h2>
-
   <nav *ngIf="role === 'ADMIN'">
     <a routerLink="/admin/home" routerLinkActive="active">Dashboard</a>
     <a routerLink="/admin/requests" routerLinkActive="active">Consumer Requests</a>
+    <a routerLink="/admin/connection-requests" routerLinkActive="active">Connection Requests</a>
     <a routerLink="/admin/consumers" routerLinkActive="active">Manage Consumers</a>
   </nav>
 
@@ -23,8 +23,8 @@
     <a routerLink="/consumer/connections" routerLinkActive="active">My Connections</a>
     <a routerLink="/consumer/profile" routerLinkActive="active">My Profile</a>
     <a routerLink="/consumer/tariffs" routerLinkActive="active">Tariff Plans</a>
-    <a routerLink="/consumer/bills" routerLinkActive="active">My Bills</a>
-    <a routerLink="/consumer/payments">Payments</a>
+    <a routerLink="/consumer/bills" routerLinkActive="active">Billing</a>
+    <a routerLink="/consumer/payments" routerLinkActive="active">Payment History</a>
   </nav>
 
   <button class="logout" (click)="logout()">Logout</button>

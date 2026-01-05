@@ -17,6 +17,7 @@ public class MeterReadingResponse {
     private String connectionId;
     private String consumerEmail;
     private UtilityType utilityType;
+    private String meterNumber;
     private double previousReading;
     private double currentReading;
     private double unitsConsumed;

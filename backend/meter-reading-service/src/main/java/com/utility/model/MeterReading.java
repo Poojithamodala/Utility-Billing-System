@@ -30,6 +30,9 @@ public class MeterReading {
 
     @NotNull
     private UtilityType utilityType;
+    
+    @NotBlank
+    private String meterNumber;
 
     @PositiveOrZero
     private double previousReading;

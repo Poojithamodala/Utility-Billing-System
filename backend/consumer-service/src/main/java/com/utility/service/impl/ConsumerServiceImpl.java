@@ -1,5 +1,6 @@
 package com.utility.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
@@ -8,16 +9,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.utility.config.AuthClient;
+import com.utility.dto.ConnectionRequestByConsumer;
 import com.utility.dto.ConsumerApprovedEvent;
 import com.utility.dto.ConsumerRegistrationRequestResponse;
 import com.utility.dto.ConsumerRejectedEvent;
 import com.utility.dto.ConsumerRequest;
 import com.utility.dto.ConsumerResponse;
 import com.utility.dto.RequestStatus;
+import com.utility.model.ConnectionRequestEntity;
 import com.utility.model.Consumer;
 import com.utility.model.ConsumerRegistrationRequest;
+import com.utility.repository.ConnectionRequestRepository;
 import com.utility.repository.ConsumerRepository;
 import com.utility.repository.ConsumerRequestRepository;
+import com.utility.security.JwtUtil;
 import com.utility.service.ConsumerService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +37,9 @@ public class ConsumerServiceImpl implements ConsumerService {
 
 	private final ConsumerRepository repository;
 	private final ConsumerRequestRepository requestRepository;
+	private final ConnectionRequestRepository connectionRequestRepo;
     private final AuthClient authClient;
+    private final JwtUtil jwtUtil;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     
     @Override
@@ -154,6 +161,62 @@ public class ConsumerServiceImpl implements ConsumerService {
 			                    )
 			                )
 			                .then();
+				});
+	}
+	
+	@Override
+	public Mono<Void> requestConnection(ConnectionRequestByConsumer request, String authHeader) {
+		String token = authHeader.substring(7);
+		String username = jwtUtil.extractUsername(token);
+
+		return repository.findByUsername(username)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer not found")))
+				.flatMap(consumer -> {
+					String consumerId = consumer.getId();
+					
+					// Check if pending request exists
+					return connectionRequestRepo.existsByConsumerIdAndUtilityTypeAndStatus(consumerId,
+							request.getUtilityType(), RequestStatus.PENDING).flatMap(exists -> {
+								if (exists) {
+									return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
+											"Pending connection request already exists for this utility"));
+								}
+
+		                    //Save request
+		                    return connectionRequestRepo.save(
+		                        ConnectionRequestEntity.builder()
+		                            .consumerId(consumerId)
+		                            .utilityType(request.getUtilityType())
+		                            .tariffPlanId(request.getTariffPlanId())
+		                            .billingCycle(request.getBillingCycle())
+		                            .status(RequestStatus.PENDING)
+		                            .requestDate(LocalDate.now())
+		                            .build()
+		                    ).then();
+		                });
+		        });
+		}
+	
+	@Override
+	public Flux<ConnectionRequestEntity> getRequestsByStatus(RequestStatus status) {
+	    return connectionRequestRepo.findByStatus(status);
+	}
+	
+	// GET /connection-requests/{id}
+	@Override
+	public Mono<ConnectionRequestEntity> getRequestById(String id) {
+		return connectionRequestRepo.findById(id).switchIfEmpty(
+				Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Connection request not found")));
+	}
+
+	// PATCH /connection-requests/{id}/status
+	@Override
+	public Mono<Void> updateRequestStatus(String id, RequestStatus status) {
+		return connectionRequestRepo.findById(id)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Connection request not found")))
+				.flatMap(req -> {
+					req.setStatus(status);
+					return connectionRequestRepo.save(req).then();
 				});
 	}
 

@@ -1,0 +1,46 @@
+<div class="admin-page">
+
+  <h2>Pending Connection Requests</h2>
+
+  <p *ngIf="loading">Loading requests...</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <table *ngIf="!loading && requests.length">
+    <thead>
+      <tr>
+        <th>Consumer ID</th>
+        <th>Utility</th>
+        <th>Tariff</th>
+        <th>Billing Cycle</th>
+        <th>Requested On</th>
+        <th>Meter Number</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let r of requests">
+        <td>{{ r.consumerId }}</td>
+        <td>{{ r.utilityType }}</td>
+        <td>{{ r.tariffPlanId }}</td>
+        <td>{{ r.billingCycle }}</td>
+        <td>{{ r.requestDate }}</td>
+
+        <td>
+          <input type="text"
+                 placeholder="Enter meter"
+                 [(ngModel)]="r.meterNumber" />
+        </td>
+
+        <td>
+          <button (click)="approve(r)">Approve</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && requests.length === 0">
+    No pending requests 🎉
+  </p>
+
+</div>

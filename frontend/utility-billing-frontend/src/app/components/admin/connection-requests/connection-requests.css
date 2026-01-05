@@ -1,0 +1,36 @@
+.admin-page {
+  padding: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+input {
+  padding: 6px;
+  width: 130px;
+}
+
+button {
+  padding: 6px 12px;
+  background-color: #5f9ea0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #4b8b8f;
+}
+
+.error {
+  color: red;
+}

@@ -14,6 +14,8 @@ import { ConsumerTariffs } from './components/consumer/consumer-tariffs/consumer
 import { ConsumerBills } from './components/consumer/consumer-bills/consumer-bills';
 import { ConsumerPayments } from './components/consumer/consumer-payments/consumer-payments';
 import { ConnectionRequests } from './components/admin/connection-requests/connection-requests';
+import { Dashboard } from './components/billing-officer/dashboard/dashboard';
+import { PendingMeterReadings } from './components/billing-officer/pending-meter-readings/pending-meter-readings';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -40,6 +42,15 @@ export const routes: Routes = [
             { path: 'tariffs', component: ConsumerTariffs },
             { path: 'bills', component: ConsumerBills },
             { path: 'payments', component: ConsumerPayments }
+        ]
+    },
+    {
+        path: 'billing',
+        component: AppLayout,
+        children: [
+            { path: 'home', component: Dashboard},
+            { path: 'connection-requests', component: ConnectionRequests},
+            { path: 'pending-meter-readings', component: PendingMeterReadings}
         ]
     }
 

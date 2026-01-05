@@ -9,13 +9,14 @@
   </nav>
 
   <nav *ngIf="role === 'BILLING_OFFICER'">
-    <a routerLink="/billing/home">Dashboard</a>
-    <a routerLink="/billing/readings">Meter Readings</a>
+    <a routerLink="/billing/home" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/billing/connection-requests" routerLinkActive="active">Connection Requests</a>
+    <a routerLink="/billing/pending-meter-readings" routerLinkActive="active">Pending Meter Readings</a>
   </nav>
 
   <nav *ngIf="role === 'ACCOUNTS_OFFICER'">
-    <a routerLink="/accounts/home">Dashboard</a>
-    <a routerLink="/accounts/payments">Payments</a>
+    <a routerLink="/accounts/home" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/accounts/payments" routerLinkActive="active">Payments</a>
   </nav>
 
   <nav *ngIf="role === 'CONSUMER'">

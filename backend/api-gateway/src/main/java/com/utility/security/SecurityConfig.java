@@ -70,10 +70,13 @@ public class SecurityConfig {
 				
 				//billing service
 				.pathMatchers(HttpMethod.POST, "/billing-service/bills/generate").hasAnyRole("ADMIN", "BILLING_OFFICER")
+				.pathMatchers(HttpMethod.GET, "/billing-service/bills").hasAnyRole("BILLING_OFFICER")
+				.pathMatchers(HttpMethod.GET, "/billing-service/bills/outstanding").hasRole("ACCOUNTS_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/billing-service/bills/consumer/{consumerId}").hasAnyRole("ADMIN", "CONSUMER", "ACCOUNTS_OFFICER")
 				
 				//payment service
 				.pathMatchers(HttpMethod.POST, "/payment-service/payments").hasAnyRole("ACCOUNTS_OFFICER", "CONSUMER")
+				.pathMatchers(HttpMethod.GET, "/payment-service/payments").hasAnyRole("ACCOUNTS_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/payment-service/payments/bill/**").hasAnyRole("ADMIN", "ACCOUNTS_OFFICER", "CONSUMER")
 				.pathMatchers(HttpMethod.GET, "/payment-service/payments/consumer/**").hasAnyRole("ADMIN", "ACCOUNTS_OFFICER", "CONSUMER")
 

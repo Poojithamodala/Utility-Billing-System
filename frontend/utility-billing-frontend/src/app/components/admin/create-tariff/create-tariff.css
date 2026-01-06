@@ -1,0 +1,139 @@
+.page {
+  padding: 24px;
+  background: #F7F9FC;
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 20px;
+}
+
+.form {
+  background: #FFFFFF;
+  padding: 24px;
+  border-radius: 18px;
+  max-width: 720px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  font-size: 14px;
+  color: #2E2E2E;
+  background: #FFFFFF;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #5F9EA0;
+}
+
+h3 {
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2E2E2E;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+thead {
+  background: #F7F9FC;
+}
+
+th {
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #E5E7EB;
+  text-align: center;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #F1F5F9;
+  text-align: center;
+}
+
+td input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+td button {
+  background: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+td button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button.add {
+  margin-top: 14px;
+  background: rgba(95, 158, 160, 0.15);
+  color: #5F9EA0;
+  border: 1px solid #5F9EA0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button.submit {
+  margin-top: 24px;
+  width: 100%;
+  background: #5F9EA0;
+  color: #FFFFFF;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success {
+  margin-top: 16px;
+  color: #059669;
+  font-weight: 500;
+}
+
+.error {
+  margin-top: 16px;
+  color: #DC2626;
+  font-weight: 500;
+}

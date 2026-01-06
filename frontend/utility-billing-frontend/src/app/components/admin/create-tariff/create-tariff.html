@@ -1,0 +1,64 @@
+<div class="page">
+
+  <h2>Create Tariff Plan</h2>
+
+  <div class="form">
+
+    <label>Utility Type</label>
+    <select [(ngModel)]="tariff.utilityType">
+      <option value="">Select Utility</option>
+      <option *ngFor="let u of utilities" [value]="u">{{ u }}</option>
+    </select>
+
+    <label>Tariff Name</label>
+    <input type="text" [(ngModel)]="tariff.name" placeholder="Domestic Plan" />
+
+    <label>Fixed Charge (₹)</label>
+    <input type="number" [(ngModel)]="tariff.fixedCharge" min="0" />
+
+    <label>Tax Percentage (%)</label>
+    <input type="number" [(ngModel)]="tariff.taxPercentage" min="0" max="100" />
+
+    <h3>Tariff Slabs</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>From Unit</th>
+          <th>To Unit</th>
+          <th>Rate (₹ / unit)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let slab of tariff.slabs; let i = index">
+          <td>
+            <input type="number" [(ngModel)]="slab.fromUnit" min="0" />
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="slab.toUnit" min="1" />
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="slab.rate" min="0.01" />
+          </td>
+          <td>
+            <button (click)="removeSlab(i)" [disabled]="tariff.slabs.length === 1">
+              ❌
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="add" (click)="addSlab()">➕ Add Slab</button>
+
+    <button class="submit" (click)="createTariff()" [disabled]="loading">
+      {{ loading ? 'Creating...' : 'Create Tariff' }}
+    </button>
+
+    <p class="success" *ngIf="message">{{ message }}</p>
+    <p class="error" *ngIf="error">{{ error }}</p>
+
+  </div>
+</div>

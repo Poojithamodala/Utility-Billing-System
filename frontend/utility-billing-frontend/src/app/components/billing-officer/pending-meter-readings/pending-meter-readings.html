@@ -4,10 +4,7 @@
 
   <!-- Utility Tabs -->
   <div class="tabs">
-    <button
-      *ngFor="let u of utilities"
-      (click)="filterByUtility(u)"
-      [class.active]="u === activeUtility">
+    <button *ngFor="let u of utilities" (click)="filterByUtility(u)" [class.active]="u === activeUtility">
       {{ u }}
     </button>
   </div>
@@ -35,32 +32,29 @@
         <td>{{ r.lastReadingDate || '—' }}</td>
 
         <td>
-          <input
-            type="number"
-            [(ngModel)]="r.currentReading"
-            [disabled]="r.readingSaved"
-          />
+          <input type="number" [(ngModel)]="r.currentReading" [disabled]="r.readingSaved" />
         </td>
 
         <td>
           <!-- Save Reading -->
-          <button
-            *ngIf="!r.readingSaved"
-            (click)="submitReading(r)">
+          <button *ngIf="!r.readingSaved" (click)="submitReading(r)">
             Save Reading
           </button>
 
           <!-- Generate Bill -->
-          <button
-            *ngIf="r.readingSaved"
-            class="bill-btn"
-            (click)="generateBill(r)">
+          <button *ngIf="r.readingSaved" class="bill-btn" (click)="generateBill(r)">
             Generate Bill
           </button>
         </td>
       </tr>
     </tbody>
   </table>
+  <div class="simple-popup-overlay" *ngIf="popupVisible">
+    <div class="simple-popup">
+      <p>{{ popupMessage }}</p>
+      <button (click)="closePopup()">OK</button>
+    </div>
+  </div>
 
   <p *ngIf="!loading && filteredPending.length === 0">
     No pending {{ activeUtility.toLowerCase() }} readings

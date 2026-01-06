@@ -18,8 +18,20 @@ export class PendingMeterReadings {
 
   loading = true;
   error = '';
+  popupMessage = '';
+  popupVisible = false;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  showPopup(message: string) {
+    this.popupMessage = message;
+    this.popupVisible = true;
+  }
+
+  closePopup() {
+    this.popupVisible = false;
+  }
+
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadPendingReadings();
@@ -60,12 +72,12 @@ export class PendingMeterReadings {
   submitReading(row: any) {
 
     if (row.currentReading == null) {
-      alert('Enter current reading');
+      this.showPopup('Enter current reading');
       return;
     }
 
     if (row.currentReading < (row.lastReadingValue || 0)) {
-      alert('Current reading cannot be less than previous reading');
+      this.showPopup('Current reading cannot be less than previous reading');
       return;
     }
 
@@ -82,11 +94,11 @@ export class PendingMeterReadings {
       next: res => {
         row.readingSaved = true;
         row.meterReadingId = res.id;
-        alert('✅ Meter reading recorded');
+        this.showPopup('Meter reading recorded successfully');
         this.cdr.detectChanges();
       },
       error: err => {
-        alert(err.error?.message || 'Failed to record reading');
+        this.showPopup(err?.error?.message || err?.error || 'Failed to record reading');
         this.cdr.detectChanges();
       }
     });
@@ -103,8 +115,7 @@ export class PendingMeterReadings {
       payload
     ).subscribe({
       next: () => {
-        alert('💰 Bill generated successfully');
-
+        this.showPopup('Bill generated successfully');
         this.allPending = this.allPending.filter(
           r => r.connectionId !== row.connectionId
         );
@@ -112,7 +123,7 @@ export class PendingMeterReadings {
         this.cdr.detectChanges();
       },
       error: err => {
-        alert(err.error?.message || 'Failed to generate bill');
+        this.showPopup(err?.error?.message || err?.error || 'Failed to generate bill');
         this.cdr.detectChanges();
       }
     });

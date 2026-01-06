@@ -19,6 +19,7 @@ import com.utility.dto.ConnectionStatus;
 import com.utility.dto.MeterReadingDTO;
 import com.utility.dto.OutstandingBillResponse;
 import com.utility.dto.TariffPlanDTO;
+import com.utility.dto.TotalOutstandingResponse;
 import com.utility.kafka.KafkaTopics;
 import com.utility.model.Bill;
 import com.utility.model.BillStatus;
@@ -217,6 +218,15 @@ public class BillingServiceImpl implements BillingService {
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bill not found")))
 				.map(this::toResponse);
 	}
+	
+	@Override
+    public Mono<TotalOutstandingResponse> getTotalOutstanding() {
+        return repository
+                .findByOutstandingAmountGreaterThan(0)
+                .map(Bill::getOutstandingAmount)
+                .reduce(0.0, Double::sum)
+                .map(TotalOutstandingResponse::new);
+    }
 
     private BillResponse toResponse(Bill bill) {
 		BillStatus status = bill.getStatus();

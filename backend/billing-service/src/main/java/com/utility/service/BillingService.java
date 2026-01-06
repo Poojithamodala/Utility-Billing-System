@@ -3,6 +3,7 @@ package com.utility.service;
 import com.utility.dto.BillGenerateRequest;
 import com.utility.dto.BillResponse;
 import com.utility.dto.OutstandingBillResponse;
+import com.utility.dto.TotalOutstandingResponse;
 import com.utility.model.BillStatus;
 
 import reactor.core.publisher.Flux;
@@ -16,4 +17,6 @@ public interface BillingService {
 	Flux<BillResponse> getBillsForConsumer(String consumerId, String authHeader);
 	Mono<Void> updateBillStatus(String billId, BillStatus status);
 	Mono<BillResponse> getBillById(String billId);
+	
+    Mono<TotalOutstandingResponse> getTotalOutstanding();
 }

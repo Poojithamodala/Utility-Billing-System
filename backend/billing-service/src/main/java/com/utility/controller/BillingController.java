@@ -14,6 +14,7 @@ import com.utility.dto.BillGenerateRequest;
 import com.utility.dto.BillResponse;
 import com.utility.dto.OutstandingBillResponse;
 import com.utility.dto.OutstandingUpdateRequest;
+import com.utility.dto.TotalOutstandingResponse;
 import com.utility.model.BillStatus;
 import com.utility.service.BillingService;
 
@@ -64,4 +65,9 @@ public class BillingController {
 	public Mono<Void> updateStatus(@PathVariable String id, @PathVariable BillStatus status) {
 		return service.updateBillStatus(id, status);
 	}
+	
+	@GetMapping("/outstanding/total")
+    public Mono<TotalOutstandingResponse> getTotalOutstanding() {
+        return service.getTotalOutstanding();
+    }
 }

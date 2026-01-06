@@ -29,75 +29,95 @@ public class PaymentServiceImpl implements PaymentService {
 	private final PaymentRepository repository;
 	private final BillingClient billingClient;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
-
+	
 	@Override
 	public Mono<PaymentResponse> makePayment(PaymentRequest request, String authHeader) {
-		
-		if (request.getAmount() <= 0) {
-			return Mono.error(
-					new ResponseStatusException(HttpStatus.BAD_REQUEST, "Payment amount must be greater than zero"));
-		}
 
-		return billingClient.getBill(request.getBillId(), authHeader)
+	    if (request.getAmount() <= 0) {
+	        return Mono.error(new ResponseStatusException(
+	                HttpStatus.BAD_REQUEST,
+	                "Payment amount must be greater than zero"
+	        ));
+	    }
 
-				// Validate bill status
-				.flatMap(bill -> {
-					if (bill.getStatus() == BillStatus.PAID) {
-						return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT, "Bill is already fully paid"));
-					}
+	    return billingClient.getBill(request.getBillId(), authHeader)
+	        .flatMap(bill -> {
 
-					// Calculate total paid so far
-					return repository.findByBillId(bill.getId())
-					        .map(Payment::getAmountPaid)
-					        .reduce(0.0, Double::sum)
-					        .defaultIfEmpty(0.0)
-					        .flatMap(totalPaid -> {
+	            if (bill.getStatus() == BillStatus.PAID) {
+	                return Mono.error(new ResponseStatusException(
+	                        HttpStatus.CONFLICT,
+	                        "Bill is already fully paid"
+	                ));
+	            }
 
-						double remaining = bill.getTotalAmount() - totalPaid;
+	            double outstanding = bill.getOutstandingAmount();
 
-						// Validate payment amount
-						if (request.getAmount() > remaining) {
-							return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST,
-									"Payment exceeds outstanding amount"));
-						}
+	            if (request.getAmount() > outstanding) {
+	                return Mono.error(new ResponseStatusException(
+	                        HttpStatus.BAD_REQUEST,
+	                        "Payment exceeds outstanding amount"
+	                ));
+	            }
 
-						// Save payment
-						Payment payment = Payment.builder()
-								.billId(bill.getId())
-								.consumerId(bill.getConsumerId())
-								.consumerEmail(bill.getConsumerEmail())
-								.utilityType(bill.getUtilityType())
-								.amountPaid(request.getAmount())
-								.paymentMode(request.getPaymentMode())
-								.paymentStatus(PaymentStatus.SUCCESS)
-								.paymentDate(LocalDate.now())
-								.referenceNumber("TXN-" + UUID.randomUUID())
-								.build();
+	            Payment payment = Payment.builder()
+	                    .billId(bill.getId())
+	                    .consumerId(bill.getConsumerId())
+	                    .consumerEmail(bill.getConsumerEmail())
+	                    .utilityType(bill.getUtilityType())
+	                    .amountPaid(request.getAmount())
+	                    .paymentMode(request.getPaymentMode())
+	                    .paymentStatus(PaymentStatus.SUCCESS)
+	                    .paymentDate(LocalDate.now())
+	                    .referenceNumber("TXN-" + UUID.randomUUID())
+	                    .build();
 
-						return repository.save(payment).flatMap(savedPayment -> {
+	            return repository.save(payment)
+	                .flatMap(savedPayment -> {
 
-						    double newOutstanding = remaining - request.getAmount();
-						    BillStatus newStatus = newOutstanding == 0 ? BillStatus.PAID : BillStatus.DUE;
+	                    double newOutstanding = outstanding - request.getAmount();
+	                    BillStatus newStatus =
+	                            newOutstanding == 0 ? BillStatus.PAID : BillStatus.DUE;
 
-						    return billingClient.updateBillStatus(bill.getId(), newStatus, authHeader)
-						        .then(Mono.fromRunnable(() ->
-						            kafkaTemplate.send(
-						                "payment-success-topic",
-						                new PaymentSuccessEvent(
-						                    bill.getId(),
-						                    bill.getConsumerEmail(),
-						                    savedPayment.getAmountPaid(),
-						                    savedPayment.getPaymentDate()
-						                )
-						            )
-						        ))
-						        .thenReturn(savedPayment);
-						});
-					});
-				})
-
-				// Map response
-				.map(this::toResponse);
+	                    return billingClient.updateBillOutstanding(
+	                            bill.getId(),
+	                            newOutstanding,
+	                            newStatus,
+	                            authHeader
+	                    )
+	                    .then(Mono.fromRunnable(() ->
+	                        kafkaTemplate.send(
+	                            "payment-success-topic",
+	                            new PaymentSuccessEvent(
+	                                bill.getId(),
+	                                bill.getConsumerEmail(),
+	                                savedPayment.getAmountPaid(),
+	                                savedPayment.getPaymentDate()
+	                            )
+	                        )
+	                    ))
+	                    // ✅ RETURN RESPONSE WITH REMAINING BALANCE
+	                    .thenReturn(
+	                        PaymentResponse.builder()
+	                            .paymentId(savedPayment.getId())
+	                            .consumerEmail(savedPayment.getConsumerEmail())
+	                            .billId(savedPayment.getBillId())
+	                            .utilityType(savedPayment.getUtilityType())
+	                            .amountPaid(savedPayment.getAmountPaid())
+	                            .remainingBalance(newOutstanding)
+	                            .paymentMode(savedPayment.getPaymentMode())
+	                            .paymentStatus(savedPayment.getPaymentStatus())
+	                            .paymentDate(savedPayment.getPaymentDate())
+	                            .referenceNumber(savedPayment.getReferenceNumber())
+	                            .build()
+	                    );
+	                });
+	        });
+	}
+	
+	@Override
+	public Flux<PaymentResponse> getAllPayments() {
+	    return repository.findAll()
+	            .map(this::toResponse);
 	}
 
 	@Override
@@ -117,6 +137,7 @@ public class PaymentServiceImpl implements PaymentService {
 				.billId(payment.getBillId())
 				.utilityType(payment.getUtilityType())
 				.amountPaid(payment.getAmountPaid())
+				.remainingBalance(0)
 				.paymentMode(payment.getPaymentMode())
 				.paymentStatus(payment.getPaymentStatus())
 				.paymentDate(payment.getPaymentDate())

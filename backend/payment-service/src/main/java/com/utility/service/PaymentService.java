@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface PaymentService {
 	Mono<PaymentResponse> makePayment(PaymentRequest request, String authHeader);
+	Flux<PaymentResponse> getAllPayments();
 	Flux<PaymentResponse> getPaymentsForBill(String billId);
 	Flux<PaymentResponse> getPaymentsForConsumer(String consumerId);
 }

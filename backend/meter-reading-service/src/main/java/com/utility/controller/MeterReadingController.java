@@ -14,6 +14,7 @@ import org.springframework.web.server.ServerWebExchange;
 import com.utility.dto.MeterReadingRequest;
 import com.utility.dto.MeterReadingResponse;
 import com.utility.dto.PendingMeterReadingResponse;
+import com.utility.dto.UtilityConsumptionResponse;
 import com.utility.service.MeterReadingService;
 
 import jakarta.validation.Valid;
@@ -61,4 +62,9 @@ public class MeterReadingController {
 	public Mono<Void> markAsBilled(@PathVariable String id) {
 	    return service.markReadingAsBilled(id);
 	}
+	
+	@GetMapping("/consumption/utility")
+    public Flux<UtilityConsumptionResponse> utilityConsumption() {
+        return service.getUtilityWiseConsumption();
+    }
 }

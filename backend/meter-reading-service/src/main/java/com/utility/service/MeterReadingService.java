@@ -3,6 +3,7 @@ package com.utility.service;
 import com.utility.dto.MeterReadingRequest;
 import com.utility.dto.MeterReadingResponse;
 import com.utility.dto.PendingMeterReadingResponse;
+import com.utility.dto.UtilityConsumptionResponse;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,4 +15,6 @@ public interface MeterReadingService {
     Flux<MeterReadingResponse> getAllReadings();
     Mono<MeterReadingResponse> getReadingById(String readingId);
     Mono<Void> markReadingAsBilled(String readingId);
+
+    Flux<UtilityConsumptionResponse> getUtilityWiseConsumption();
 }

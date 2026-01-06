@@ -14,6 +14,7 @@ import com.utility.config.ConnectionStatus;
 import com.utility.dto.MeterReadingRequest;
 import com.utility.dto.MeterReadingResponse;
 import com.utility.dto.PendingMeterReadingResponse;
+import com.utility.dto.UtilityConsumptionResponse;
 import com.utility.model.MeterReading;
 import com.utility.model.ReadingStatus;
 import com.utility.repository.MeterReadingRepository;
@@ -240,6 +241,20 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 					return repository.save(reading).then();
 				});
 	}
+	
+	@Override
+    public Flux<UtilityConsumptionResponse> getUtilityWiseConsumption() {
+        return repository.findAll()
+            // group by utility type
+            .groupBy(MeterReading::getUtilityType)
+            // sum units per utility
+            .flatMap(group ->
+                group
+                    .map(MeterReading::getUnitsConsumed)
+                    .reduce(0.0, Double::sum)
+					.map(total -> new UtilityConsumptionResponse(group.key(), total))
+            );
+    }
 
 	private MeterReadingResponse toResponse(MeterReading reading) {
 		return MeterReadingResponse.builder()

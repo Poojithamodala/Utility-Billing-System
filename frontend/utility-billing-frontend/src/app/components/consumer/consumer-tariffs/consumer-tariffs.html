@@ -54,6 +54,13 @@
             </button>
         </div>
     </div>
+    <!-- Simple Popup -->
+<div class="simple-popup-overlay" *ngIf="popupVisible">
+  <div class="simple-popup">
+    <p>{{ popupMessage }}</p>
+    <button (click)="closePopup()">OK</button>
+  </div>
+</div>
 
     <div class="info-note">
         ℹ️ Tariff plans are read-only and managed by the utility authority.

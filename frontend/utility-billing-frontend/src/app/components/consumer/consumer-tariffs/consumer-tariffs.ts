@@ -16,7 +16,19 @@ export class ConsumerTariffs {
   loading = false;
   error = '';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  popupMessage = '';
+  popupVisible = false;
+
+  showPopup(message: string) {
+    this.popupMessage = message;
+    this.popupVisible = true;
+  }
+
+  closePopup() {
+    this.popupVisible = false;
+  }
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadTariffs(this.selectedUtility);
@@ -44,24 +56,33 @@ export class ConsumerTariffs {
   }
 
   requestConnection(tariff: any) {
+    const payload = {
+      utilityType: tariff.utilityType,
+      tariffPlanId: tariff.id,
+      billingCycle: 'MONTHLY'
+    };
 
-  const payload = {
-    utilityType: tariff.utilityType,
-    tariffPlanId: tariff.id,
-    billingCycle: 'MONTHLY'
-  };
+    this.http.post(
+      'http://localhost:8765/consumer-service/consumers/request-connection',
+      payload
+    ).subscribe({
+      next: () => {
+        this.showPopup(
+          'Connection request submitted successfully. Please wait for Billing Officer approval.'
+        );
+      },
+      error: err => {
+        let backendMessage = 'Failed to request connection';
 
-  this.http.post(
-    'http://localhost:8765/consumer-service/consumers/request-connection',
-    payload,
-    { responseType: 'text' } 
-  ).subscribe({
-    next: () => {
-      alert('✅ Connection request submitted successfully, Wait for admin approval');
-    },
-    error: err => {
-      alert(err.error?.message || 'Failed to request connection');
-    }
-  });
-}
+        if (err?.error?.error) {
+          backendMessage = err.error.error;
+        } else if (typeof err?.error === 'string') {
+          backendMessage = err.error;
+        } else if (err?.message) {
+          backendMessage = err.message;
+        }
+        this.showPopup(backendMessage);
+      }
+    });
+  }
 }

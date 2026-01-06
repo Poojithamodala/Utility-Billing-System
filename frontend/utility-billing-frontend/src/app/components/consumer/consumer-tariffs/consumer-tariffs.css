@@ -115,3 +115,43 @@
 .connect-btn:hover {
   background-color: #4b8b8f;
 }
+
+.simple-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.simple-popup {
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 8px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.simple-popup p {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.simple-popup button {
+  padding: 6px 18px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4b8b8f;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.simple-popup button:hover {
+  background-color: #4b8b8f;
+}

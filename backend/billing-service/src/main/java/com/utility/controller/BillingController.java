@@ -12,6 +12,8 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.utility.dto.BillGenerateRequest;
 import com.utility.dto.BillResponse;
+import com.utility.dto.OutstandingBillResponse;
+import com.utility.dto.OutstandingUpdateRequest;
 import com.utility.model.BillStatus;
 import com.utility.service.BillingService;
 
@@ -33,14 +35,29 @@ public class BillingController {
 		return service.generateBill(request, authHeader);
 	}
 
+	@GetMapping
+	public Flux<BillResponse> getAllBills() {
+		return service.getAllBills();
+	}
+	
+	@GetMapping("/outstanding")
+    public Flux<OutstandingBillResponse> outstandingBills() {
+        return service.getOutstandingBills();
+    }
+
+	@PutMapping("/{billId}/outstanding")
+	public Mono<Void> updateOutstanding(@PathVariable String billId, @RequestBody OutstandingUpdateRequest request) {
+		return service.updateOutstandingAmount(billId, request.getOutstandingAmount(), request.getStatus());
+	}
+
 	@GetMapping("/consumer/{consumerId}")
 	public Flux<BillResponse> consumerBills(@PathVariable String consumerId) {
 		return service.getBillsForConsumer(consumerId, null);
 	}
-	
+
 	@GetMapping("/{billId}")
 	public Mono<BillResponse> getBillById(@PathVariable String billId) {
-	    return service.getBillById(billId);
+		return service.getBillById(billId);
 	}
 
 	@PutMapping("/{id}/status/{status}")

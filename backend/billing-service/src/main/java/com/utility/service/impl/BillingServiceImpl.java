@@ -1,6 +1,7 @@
 package com.utility.service.impl;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -16,6 +17,7 @@ import com.utility.dto.BillResponse;
 import com.utility.dto.ConnectionDTO;
 import com.utility.dto.ConnectionStatus;
 import com.utility.dto.MeterReadingDTO;
+import com.utility.dto.OutstandingBillResponse;
 import com.utility.dto.TariffPlanDTO;
 import com.utility.kafka.KafkaTopics;
 import com.utility.model.Bill;
@@ -119,6 +121,7 @@ public class BillingServiceImpl implements BillingService {
                         .fixedCharge(tariff.getFixedCharge())
                         .taxAmount(tax)
                         .totalAmount(total)
+                        .outstandingAmount(total)
                         .status(BillStatus.GENERATED)
                         .billDate(LocalDate.now())
                         .dueDate(LocalDate.now().plusDays(15))
@@ -146,6 +149,51 @@ public class BillingServiceImpl implements BillingService {
             })
             .map(this::toResponse);
     }
+    
+    @Override
+    public Flux<BillResponse> getAllBills() {
+        return repository.findAll()
+                .map(this::toResponse);
+    }
+    
+	@Override
+	public Mono<Void> updateOutstandingAmount(String billId, double outstandingAmount, BillStatus status) {
+
+		if (outstandingAmount < 0) {
+			return Mono.error(
+					new ResponseStatusException(HttpStatus.BAD_REQUEST, "Outstanding amount cannot be negative"));
+		}
+
+		return repository.findById(billId)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bill not found")))
+				.flatMap(bill -> {
+					bill.setOutstandingAmount(outstandingAmount);
+					bill.setStatus(status);
+					return repository.save(bill).then();
+				});
+	}
+	
+	@Override
+	public Flux<OutstandingBillResponse> getOutstandingBills() {
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+		return repository.findByOutstandingAmountGreaterThan(0).map(bill -> {
+			BillStatus computedStatus = bill.getStatus();
+			if (today.isAfter(bill.getDueDate())) {
+				computedStatus = BillStatus.OVERDUE;
+			}
+			double paidSoFar = bill.getTotalAmount() - bill.getOutstandingAmount();
+	            return OutstandingBillResponse.builder()
+	                    .billId(bill.getId())
+	                    .consumerEmail(bill.getConsumerEmail())
+	                    .utilityType(bill.getUtilityType())
+	                    .totalAmount(bill.getTotalAmount())
+	                    .paidSoFar(paidSoFar)
+	                    .remainingAmount(bill.getOutstandingAmount())
+	                    .dueDate(bill.getDueDate())
+	                    .status(computedStatus)
+	                    .build();
+	        });
+	}
 
 	@Override
 	public Flux<BillResponse> getBillsForConsumer(String consumerId, String authHeader) {
@@ -171,6 +219,12 @@ public class BillingServiceImpl implements BillingService {
 	}
 
     private BillResponse toResponse(Bill bill) {
+		BillStatus status = bill.getStatus();
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+		if (bill.getOutstandingAmount() > 0 &&
+			    today.isAfter(bill.getDueDate())) {
+			    status = BillStatus.OVERDUE;
+			}
         return BillResponse.builder()
                 .id(bill.getId())
                 .consumerId(bill.getConsumerId())
@@ -179,7 +233,8 @@ public class BillingServiceImpl implements BillingService {
                 .utilityType(bill.getUtilityType())
                 .unitsConsumed(bill.getUnitsConsumed())
                 .totalAmount(bill.getTotalAmount())
-                .status(bill.getStatus())
+                .outstandingAmount(bill.getOutstandingAmount())
+                .status(status)
                 .billDate(bill.getBillDate())
                 .dueDate(bill.getDueDate())
                 .build();

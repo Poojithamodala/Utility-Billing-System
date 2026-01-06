@@ -1,5 +1,6 @@
 package com.utility.service;
 
+import com.utility.dto.MonthlyRevenueResponse;
 import com.utility.dto.PaymentRequest;
 import com.utility.dto.PaymentResponse;
 
@@ -11,4 +12,6 @@ public interface PaymentService {
 	Flux<PaymentResponse> getAllPayments();
 	Flux<PaymentResponse> getPaymentsForBill(String billId);
 	Flux<PaymentResponse> getPaymentsForConsumer(String consumerId);
+	
+	Flux<MonthlyRevenueResponse> getMonthlyRevenue();
 }

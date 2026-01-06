@@ -1,6 +1,8 @@
 package com.utility.service.impl;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.utility.config.BillingClient;
 import com.utility.dto.BillStatus;
+import com.utility.dto.MonthlyRevenueResponse;
 import com.utility.dto.PaymentRequest;
 import com.utility.dto.PaymentResponse;
 import com.utility.dto.PaymentSuccessEvent;
@@ -95,7 +98,6 @@ public class PaymentServiceImpl implements PaymentService {
 	                            )
 	                        )
 	                    ))
-	                    // ✅ RETURN RESPONSE WITH REMAINING BALANCE
 	                    .thenReturn(
 	                        PaymentResponse.builder()
 	                            .paymentId(savedPayment.getId())
@@ -129,6 +131,39 @@ public class PaymentServiceImpl implements PaymentService {
 	public Flux<PaymentResponse> getPaymentsForConsumer(String consumerId) {
 		return repository.findByConsumerId(consumerId).map(this::toResponse);
 	}
+	
+	@Override
+    public Flux<MonthlyRevenueResponse> getMonthlyRevenue() {
+
+        return repository.findAll()
+
+            //only SUCCESS payments
+            .filter(payment -> payment.getPaymentStatus() == PaymentStatus.SUCCESS)
+
+            //map to (YearMonth, amount)
+            .map(payment -> {
+                String month = payment.getPaymentDate().getYear()
+                        + "-" +
+                        String.format("%02d", payment.getPaymentDate().getMonthValue());
+
+                return Map.entry(month, payment.getAmountPaid());
+            })
+
+            //group by month
+            .groupBy(Map.Entry::getKey)
+
+            //sum per month
+            .flatMap(group ->
+                group.map(Map.Entry::getValue)
+                     .reduce(0.0, Double::sum)
+                     .map(total ->
+                         new MonthlyRevenueResponse(group.key(), total)
+                     )
+            )
+
+            //sort by month
+            .sort(Comparator.comparing(MonthlyRevenueResponse::getMonth));
+    }
 
 	private PaymentResponse toResponse(Payment payment) {
 		return PaymentResponse.builder()

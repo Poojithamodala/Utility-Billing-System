@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.utility.dto.MonthlyRevenueResponse;
 import com.utility.dto.PaymentRequest;
 import com.utility.dto.PaymentResponse;
 import com.utility.service.PaymentService;
@@ -45,4 +46,9 @@ public class PaymentController {
 	public Flux<PaymentResponse> consumerPayments(@PathVariable String consumerId) {
 		return service.getPaymentsForConsumer(consumerId);
 	}
+	
+	@GetMapping("/revenue/monthly")
+    public Flux<MonthlyRevenueResponse> getMonthlyRevenue() {
+        return service.getMonthlyRevenue();
+    }
 }

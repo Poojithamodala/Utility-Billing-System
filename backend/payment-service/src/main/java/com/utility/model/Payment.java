@@ -27,7 +27,7 @@ public class Payment {
     
     private double amountPaid;
 
-    private PaymentMode paymentMode;     // ONLINE / CASH / UPI
+    private PaymentMode paymentMode;     // ONLINE / CASH / UPI /CARD / BANK_TRANSFER
     private PaymentStatus paymentStatus; // SUCCESS / FAILED
 
     private LocalDate paymentDate;

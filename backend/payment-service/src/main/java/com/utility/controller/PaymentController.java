@@ -30,6 +30,11 @@ public class PaymentController {
 		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 		return service.makePayment(request, authHeader);
 	}
+	
+	@GetMapping
+	public Flux<PaymentResponse> allPayments() {
+	    return service.getAllPayments();
+	}
 
 	@GetMapping("/bill/{billId}")
 	public Flux<PaymentResponse> billPayments(@PathVariable String billId) {

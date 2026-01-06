@@ -16,6 +16,7 @@ public class PaymentResponse {
     private String billId;
     private String utilityType; 
     private double amountPaid;
+    private double remainingBalance;
     private PaymentMode paymentMode;
     private PaymentStatus paymentStatus;
     private LocalDate paymentDate;

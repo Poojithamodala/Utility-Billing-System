@@ -13,4 +13,5 @@ public class BillDTO {
     private LocalDate dueDate;
     private String consumerEmail;
     private String utilityType;
+    private double outstandingAmount;
 }

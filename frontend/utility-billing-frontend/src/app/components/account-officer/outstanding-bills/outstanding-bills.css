@@ -1,10 +1,20 @@
 .page {
   padding: 24px;
+  background: #F7F9FC;
+  min-height: 100vh;
+}
+
+.page h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 4px;
 }
 
 .subtitle {
-  color: #6b7280;
-  margin-bottom: 16px;
+  color: #6B7280;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
 
 .tabs {
@@ -14,41 +24,94 @@
 }
 
 .tabs button {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
   padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: white;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.tabs button:hover {
+  background: #F1F5F9;
 }
 
 .tabs button.active {
-  background: #5f9ea0;
-  color: white;
+  background: #5F9EA0;
+  color: #FFFFFF;
+  border-color: #5F9EA0;
+}
+
+.page p {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.error {
+  color: #DC2626;
+  margin-top: 10px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  background: #FFFFFF;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
-th, td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #e5e7eb;
+thead {
+  background: #F7F9FC;
 }
 
 th {
-  background: #f8fafc;
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #E5E7EB;
 }
 
-.status {
+td {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #2E2E2E;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+td strong {
+  color: #DC2626;
   font-weight: 600;
 }
 
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
 .status.due {
-  color: #ca8a04;
+  background: rgba(234, 179, 8, 0.15);
+  color: #CA8A04;
 }
 
 .status.overdue {
-  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.15);
+  color: #DC2626;
+}
+
+.page p:last-child {
+  margin-top: 20px;
+  color: #6B7280;
 }

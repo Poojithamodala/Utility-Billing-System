@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Bill {
 
-    @Id
+	@Id
     private String id;
 
     private String consumerId;
@@ -25,19 +25,17 @@ public class Bill {
     private String consumerEmail;
 
     private UtilityType utilityType;
-
     private String meterReadingId;
 
     private double unitsConsumed;
-
-    private double energyCharge;   // slab based
+    private double energyCharge;
     private double fixedCharge;
     private double taxAmount;
 
     private double totalAmount;
+    private double outstandingAmount;
 
     private BillStatus status;
-
     private LocalDate billDate;
     private LocalDate dueDate;
 }

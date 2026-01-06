@@ -20,6 +20,7 @@ public class BillResponse {
 
     private double unitsConsumed;
     private double totalAmount;
+    private double outstandingAmount;
     private BillStatus status;
 
     private LocalDate billDate;

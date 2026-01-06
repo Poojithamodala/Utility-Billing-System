@@ -66,10 +66,7 @@ public class AuthServiceImpl implements AuthService {
 		String username = request.getUsername().trim();
 		String password = request.getPassword();
 
-		if (username.equalsIgnoreCase("admin") && password.equalsIgnoreCase("admin")) {
-			return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials"));
-		}
-		return userRepository.findByUsername(request.getUsername())
+		return userRepository.findByUsername(username)
 				.switchIfEmpty(Mono
 						.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password")))
 				.flatMap(user -> {
@@ -93,8 +90,18 @@ public class AuthServiceImpl implements AuthService {
 						        ));
 					}
 					user.setFailedAttempts(0);
-					String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
-					return Mono.just(LoginResponse.builder().token(token).role(user.getRole().name()).build());
+
+					return userRepository.save(user)
+					    .map(savedUser -> {
+					        String token = jwtUtil.generateToken(
+					            savedUser.getUsername(),
+					            savedUser.getRole().name()
+					        );
+					        return LoginResponse.builder()
+					            .token(token)
+					            .role(savedUser.getRole().name())
+					            .build();
+					    });
 				});
 	}
 

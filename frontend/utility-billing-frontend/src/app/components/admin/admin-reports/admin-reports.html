@@ -1,0 +1,31 @@
+<div class="reports-page">
+
+  <h1 class="title">System Reports</h1>
+  <p class="subtitle">High-level analytics and performance overview</p>
+
+  <p *ngIf="loading">Loading reports...</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <!-- SUMMARY CARDS -->
+  <div class="cards" *ngIf="!loading">
+    <div class="card">
+      <h3>Total Outstanding Dues</h3>
+      <p class="amount">₹ {{ outstandingTotal }}</p>
+    </div>
+  </div>
+
+  <div class="chart-card">
+  <h3>Monthly Revenue</h3>
+  <canvas #revenueCanvas></canvas>
+</div>
+
+<div class="chart-card">
+  <h3>Utility-wise Consumption</h3>
+  <canvas #utilityCanvas></canvas>
+</div>
+
+<div class="chart-card">
+  <h3>Consumer Growth</h3>
+  <canvas #growthCanvas></canvas>
+</div>
+</div>

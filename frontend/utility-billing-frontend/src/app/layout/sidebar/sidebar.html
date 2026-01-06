@@ -12,11 +12,13 @@
     <a routerLink="/billing/home" routerLinkActive="active">Dashboard</a>
     <a routerLink="/billing/connection-requests" routerLinkActive="active">Connection Requests</a>
     <a routerLink="/billing/pending-meter-readings" routerLinkActive="active">Pending Meter Readings</a>
+    <a routerLink="/billing/consumer-bills" routerLinkActive="active">Consumer Bills</a>
   </nav>
 
   <nav *ngIf="role === 'ACCOUNTS_OFFICER'">
     <a routerLink="/accounts/home" routerLinkActive="active">Dashboard</a>
     <a routerLink="/accounts/payments" routerLinkActive="active">Payments</a>
+    <a routerLink="/accounts/outstanding-bills" routerLinkActive="active">Outstanding Bills</a>
   </nav>
 
   <nav *ngIf="role === 'CONSUMER'">

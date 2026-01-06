@@ -16,6 +16,10 @@ import { ConsumerPayments } from './components/consumer/consumer-payments/consum
 import { ConnectionRequests } from './components/admin/connection-requests/connection-requests';
 import { Dashboard } from './components/billing-officer/dashboard/dashboard';
 import { PendingMeterReadings } from './components/billing-officer/pending-meter-readings/pending-meter-readings';
+import { BillingOfficerBills } from './components/billing-officer/billing-officer-bills/billing-officer-bills';
+import { AccountOfficerDashboard } from './components/account-officer/account-officer-dashboard/account-officer-dashboard';
+import { AccountsPayments } from './components/account-officer/accounts-payments/accounts-payments';
+import { OutstandingBills } from './components/account-officer/outstanding-bills/outstanding-bills';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -50,8 +54,18 @@ export const routes: Routes = [
         children: [
             { path: 'home', component: Dashboard},
             { path: 'connection-requests', component: ConnectionRequests},
-            { path: 'pending-meter-readings', component: PendingMeterReadings}
+            { path: 'pending-meter-readings', component: PendingMeterReadings},
+            { path: 'consumer-bills', component: BillingOfficerBills}
         ]
-    }
+    },
+    {
+        path: 'accounts',
+        component: AppLayout,
+        children: [
+            { path: 'home', component: AccountOfficerDashboard },
+            { path: 'payments', component: AccountsPayments },
+            { path: 'outstanding-bills', component: OutstandingBills}
+        ]
+    },
 
 ];

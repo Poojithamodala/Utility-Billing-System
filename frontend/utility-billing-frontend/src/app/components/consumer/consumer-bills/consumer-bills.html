@@ -21,23 +21,30 @@
                 <th>Bill Date</th>
                 <th>Due Date</th>
                 <th>Units</th>
-                <th>Amount</th>
+                <th>Total</th>
+                <th>Remaining</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
 
         <tbody>
             <tr *ngFor="let bill of filteredBills">
                 <td>{{ bill.billDate }}</td>
-                <td>{{ bill.dueDate }}</td>
+                <td>{{ bill.dueDate | date:'yyyy-MM-dd' }}</td>
                 <td>{{ bill.unitsConsumed }}</td>
                 <td>₹ {{ bill.totalAmount }}</td>
                 <td>
-                    <span class="status" [class.paid]="bill.status === 'PAID'" [class.due]="bill.status !== 'PAID'">
+                    <strong>₹ {{ bill.outstandingAmount }}</strong>
+                </td>
+                <td>
+                    <span class="status" [class.paid]="bill.status === 'PAID'" [class.due]="bill.status === 'DUE'"
+                        [class.overdue]="bill.status === 'OVERDUE'">
                         {{ bill.status }}
                     </span>
-
-                    <button *ngIf="bill.status !== 'PAID'" class="pay-btn" (click)="selectBill(bill)">
+                </td>
+                <td>
+                    <button class="pay-btn" *ngIf="bill.outstandingAmount > 0" (click)="selectBill(bill)">
                         Pay
                     </button>
                 </td>
@@ -45,40 +52,41 @@
         </tbody>
     </table>
 
+
     <!-- Pay Bill Section -->
     <!-- Payment Modal Overlay -->
-<div class="modal-overlay" *ngIf="selectedBill">
+    <div class="modal-overlay" *ngIf="selectedBill">
+        <div class="modal">
 
-  <div class="modal">
+            <button class="close-btn" (click)="closeModal()">✕</button>
 
-    <button class="close-btn" (click)="selectedBill = null">✕</button>
+            <h3>Pay Bill</h3>
 
-    <h3>Pay Bill</h3>
+            <p><strong>Utility:</strong> {{ selectedBill.utilityType }}</p>
+            <p><strong>Total Amount:</strong> ₹ {{ selectedBill.totalAmount }}</p>
+            <p><strong>Outstanding:</strong> ₹ {{ selectedBill.outstandingAmount }}</p>
 
-    <p><strong>Utility:</strong> {{ selectedBill.utilityType }}</p>
-    <p><strong>Bill Amount:</strong> ₹ {{ selectedBill.totalAmount }}</p>
+            <label>Pay Amount</label>
+            <input type="number" [(ngModel)]="payment.amount" [max]="selectedBill.outstandingAmount" min="1" />
 
-    <label>Amount</label>
-    <input type="number" [(ngModel)]="payment.amount" min="1" />
+            <label>Payment Mode</label>
+            <select [(ngModel)]="payment.paymentMode">
+                <option *ngFor="let mode of paymentModes" [value]="mode">
+                    {{ mode }}
+                </option>
+            </select>
 
-    <label>Payment Mode</label>
-    <select [(ngModel)]="payment.paymentMode">
-      <option *ngFor="let mode of paymentModes" [value]="mode">
-        {{ mode }}
-      </option>
-    </select>
+            <button class="pay-now" (click)="makePayment()" [disabled]="paying">
+                {{ paying ? 'Processing...' : 'Pay Now' }}
+            </button>
 
-    <button class="pay-now" (click)="makePayment()" [disabled]="paying">
-      {{ paying ? 'Processing...' : 'Pay Now' }}
-    </button>
+            <p class="success" *ngIf="paymentMessage && !paying">
+                {{ paymentMessage }}
+            </p>
 
-    <p class="success" *ngIf="paymentMessage && !paying">
-      {{ paymentMessage }}
-    </p>
+        </div>
+    </div>
 
-  </div>
-
-</div>
 
     <p *ngIf="!loading && filteredBills.length === 0" class="empty">
         No {{ activeUtility.toLowerCase() }} bills available

@@ -13,6 +13,7 @@ export class ConsumerBills {
   bills: any[] = [];
   filteredBills: any[] = [];
   selectedBill: any = null;
+
   paying = false;
   paymentMessage = '';
 
@@ -28,7 +29,7 @@ export class ConsumerBills {
     paymentMode: 'UPI'
   };
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadBills();
@@ -69,11 +70,12 @@ export class ConsumerBills {
 
   selectBill(bill: any) {
     this.selectedBill = bill;
-    this.payment.amount = bill.totalAmount;
+    this.payment.amount = bill.outstandingAmount;
     this.payment.paymentMode = 'UPI';
     this.paymentMessage = '';
     document.body.classList.add('modal-open');
   }
+
   makePayment() {
     if (!this.selectedBill) return;
 
@@ -91,37 +93,29 @@ export class ConsumerBills {
       payload
     ).subscribe({
       next: res => {
-        this.paymentMessage = `Payment successful (Ref: ${res.referenceNumber})`;
+        this.paymentMessage =
+          ` Payment successful (Ref: ${res.referenceNumber})`;
+
         this.paying = false;
-        this.loadBills(); // refresh bills
-        this.cdr.detectChanges();
+        this.loadBills();
+
         setTimeout(() => {
-        this.selectedBill = null;
-        this.paymentMessage = '';
-        document.body.classList.remove('modal-open');
-        this.cdr.detectChanges();
-      }, 3000);
+          this.closeModal();
+        }, 2500);
       },
       error: err => {
-      this.paying = false;
-      if (err.status === 500) {
-        this.paymentMessage =
-          '✅ Payment successful! (Notification delayed)';
-
-        setTimeout(() => {
-          this.selectedBill = null;
-          this.paymentMessage = '';
-          document.body.classList.remove('modal-open');
-          this.loadBills();
-          this.cdr.detectChanges();
-        }, 2000);
-      } else {
+        this.paying = false;
         this.paymentMessage =
           err.error?.message || 'Payment failed';
+        this.cdr.detectChanges();
       }
+    });
+  }
 
-      this.cdr.detectChanges();
-    }
-  });
+  closeModal() {
+    this.selectedBill = null;
+    this.paymentMessage = '';
+    document.body.classList.remove('modal-open');
+    this.cdr.detectChanges();
   }
 }

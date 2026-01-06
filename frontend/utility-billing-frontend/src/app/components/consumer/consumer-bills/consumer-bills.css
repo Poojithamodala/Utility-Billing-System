@@ -171,3 +171,8 @@ tbody tr:last-child {
   font-size: 14px;
   text-align: center;
 }
+
+.status.overdue {
+  color: #b91c1c;
+  font-weight: 600;
+}

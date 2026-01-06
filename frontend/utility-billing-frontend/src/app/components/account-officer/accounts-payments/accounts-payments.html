@@ -1,0 +1,53 @@
+<div class="page">
+
+  <h2>Payments</h2>
+
+  <!-- Utility Tabs -->
+  <div class="tabs">
+    <button
+      *ngFor="let u of utilities"
+      (click)="filterByUtility(u)"
+      [class.active]="u === activeUtility">
+      {{ u }}
+    </button>
+  </div>
+
+  <p *ngIf="loading">Loading payments...</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <table *ngIf="!loading && filteredPayments.length">
+    <thead>
+      <tr>
+        <th>Consumer</th>
+        <th>Bill ID</th>
+        <th>Amount Paid (₹)</th>
+        <th>Mode</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let p of filteredPayments">
+        <td>{{ p.consumerEmail }}</td>
+        <td>{{ p.billId }}</td>
+        <td>{{ p.amountPaid }}</td>
+        <td>{{ p.paymentMode }}</td>
+        <td>{{ p.paymentDate }}</td>
+        <td>
+          <span
+            class="status"
+            [class.success]="p.paymentStatus === 'SUCCESS'"
+            [class.failed]="p.paymentStatus === 'FAILED'">
+            {{ p.paymentStatus }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && filteredPayments.length === 0">
+    No {{ activeUtility.toLowerCase() }} payments found
+  </p>
+
+</div>

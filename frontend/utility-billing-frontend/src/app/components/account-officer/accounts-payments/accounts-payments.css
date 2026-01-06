@@ -1,0 +1,61 @@
+.page {
+  padding: 30px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;   
+  vertical-align: middle;
+}
+
+th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.status.success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status.failed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.error {
+  color: red;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #e5e7eb;
+  font-weight: 500;
+}
+
+.tabs button.active {
+  background-color: #5f9ea0;
+  color: white;
+}

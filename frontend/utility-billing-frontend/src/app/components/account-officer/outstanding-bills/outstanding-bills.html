@@ -1,0 +1,58 @@
+<div class="page">
+
+  <h2>Outstanding Bills</h2>
+  <p class="subtitle">
+    Track consumers with pending and overdue payments
+  </p>
+
+  <!-- Utility Tabs -->
+  <div class="tabs">
+    <button
+      *ngFor="let u of utilities"
+      (click)="filterByUtility(u)"
+      [class.active]="u === activeUtility">
+      {{ u }}
+    </button>
+  </div>
+
+  <p *ngIf="loading">Loading outstanding bills...</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <table *ngIf="!loading && filteredBills.length > 0">
+    <thead>
+      <tr>
+        <th>Consumer Email</th>
+        <th>Total Amount</th>
+        <th>Paid So Far</th>
+        <th>Remaining</th>
+        <th>Due Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let bill of filteredBills">
+        <td>{{ bill.consumerEmail }}</td>
+        <td>₹ {{ bill.totalAmount }}</td>
+        <td>₹ {{ bill.paidSoFar }}</td>
+        <td>
+          <strong>₹ {{ bill.remainingAmount }}</strong>
+        </td>
+        <td>{{ bill.dueDate | date:'yyyy-MM-dd' }}</td>
+        <td>
+          <span
+            class="status"
+            [class.due]="bill.status === 'DUE'"
+            [class.overdue]="bill.status === 'OVERDUE'">
+            {{ bill.status }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && filteredBills.length === 0">
+    No outstanding {{ activeUtility.toLowerCase() }} bills
+  </p>
+
+</div>

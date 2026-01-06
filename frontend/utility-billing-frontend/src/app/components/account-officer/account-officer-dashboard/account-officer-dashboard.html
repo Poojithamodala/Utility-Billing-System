@@ -1,0 +1,57 @@
+<div class="dashboard">
+
+  <h2>Accounts Overview</h2>
+
+  <!-- Stats Cards -->
+  <div class="cards">
+
+    <div class="card">
+      <h4>Total Revenue</h4>
+      <p class="value">₹ {{ stats.totalRevenue }}</p>
+    </div>
+
+    <div class="card warning">
+      <h4>Outstanding Amount</h4>
+      <p class="value">₹ {{ stats.outstanding }}</p>
+    </div>
+
+    <div class="card success">
+      <h4>Payments Today</h4>
+      <p class="value">{{ stats.todayPayments }}</p>
+    </div>
+
+    <div class="card danger">
+      <h4>Unpaid Bills</h4>
+      <p class="value">{{ stats.unpaidBills }}</p>
+    </div>
+
+  </div>
+
+  <!-- Recent Payments -->
+  <div class="section">
+    <h3>Recent Payments</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Consumer</th>
+          <th>Utility</th>
+          <th>Amount</th>
+          <th>Mode</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let p of recentPayments">
+          <td>{{ p.email }}</td>
+          <td>{{ p.utility }}</td>
+          <td>₹ {{ p.amount }}</td>
+          <td>{{ p.mode }}</td>
+          <td>{{ p.date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

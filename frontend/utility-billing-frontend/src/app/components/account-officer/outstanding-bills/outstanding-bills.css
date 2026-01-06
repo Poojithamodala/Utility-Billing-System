@@ -1,0 +1,54 @@
+.page {
+  padding: 24px;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #5f9ea0;
+  color: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background: #f8fafc;
+}
+
+.status {
+  font-weight: 600;
+}
+
+.status.due {
+  color: #ca8a04;
+}
+
+.status.overdue {
+  color: #b91c1c;
+}

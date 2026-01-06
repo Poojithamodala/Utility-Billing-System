@@ -65,6 +65,74 @@ public class TariffServiceImpl implements TariffService {
 	public Flux<TariffPlan> getTariffsByUtility(UtilityType utilityType) {
 		return repository.findByUtilityType(utilityType);
 	}
+	
+	@Override
+	public Mono<TariffPlan> updateTariff(String id, TariffPlan updatedTariff) {
+	    return repository.findById(id)
+	        .switchIfEmpty(Mono.error(
+	            new IllegalArgumentException("Tariff not found")
+	        ))
+	        .flatMap(existing -> {
+	            updatedTariff.setUtilityType(existing.getUtilityType());
+	            updatedTariff.setId(id);
+	            validateSlabs(updatedTariff.getSlabs());
+	            return repository.save(updatedTariff);
+	        });
+	}
+	
+	@Override
+	public Mono<Void> deleteTariff(String id) {
+
+	    return repository.existsById(id)
+	        .flatMap(inUse -> {
+	            if (inUse) {
+	                return Mono.error(
+	                    new IllegalStateException("Tariff is in use and cannot be deleted")
+	                );
+	            }
+	            return repository.deleteById(id);
+	        });
+	}
+	
+	private void validateSlabs(List<TariffSlab> slabs) {
+
+	    if (slabs == null || slabs.isEmpty()) {
+	        throw new IllegalArgumentException("At least one slab is required");
+	    }
+
+	    slabs.sort(Comparator.comparingInt(TariffSlab::getFromUnit));
+
+	    if (slabs.get(0).getFromUnit() != 0) {
+	        throw new IllegalArgumentException("First slab must start from unit 0");
+	    }
+
+	    Set<String> ranges = new HashSet<>();
+
+	    for (int i = 0; i < slabs.size(); i++) {
+	        TariffSlab slab = slabs.get(i);
+
+	        if (slab.getFromUnit() > slab.getToUnit()) {
+	            throw new IllegalArgumentException("Invalid slab range");
+	        }
+
+	        String key = slab.getFromUnit() + "-" + slab.getToUnit();
+	        if (!ranges.add(key)) {
+	            throw new IllegalArgumentException("Duplicate slab ranges not allowed");
+	        }
+
+	        if (i > 0) {
+	            TariffSlab prev = slabs.get(i - 1);
+
+	            if (slab.getFromUnit() <= prev.getToUnit()) {
+	                throw new IllegalArgumentException("Slab overlap detected");
+	            }
+
+	            if (slab.getFromUnit() != prev.getToUnit() + 1) {
+	                throw new IllegalArgumentException("Slabs must be continuous");
+	            }
+	        }
+	    }
+	}
 
 	@Override
 	public Mono<TariffPlan> getTariffById(String id) {

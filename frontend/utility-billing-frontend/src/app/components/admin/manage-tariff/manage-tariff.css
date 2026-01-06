@@ -1,0 +1,202 @@
+.page {
+  padding: 24px;
+  background: #F7F9FC;
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  background: #FFFFFF;
+  color: #6B7280;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #5F9EA0;
+  color: #FFFFFF;
+  border-color: #5F9EA0;
+}
+
+.error {
+  color: #DC2626;
+  margin-bottom: 16px;
+}
+
+.tariff-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.tariff-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.tariff-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 10px;
+}
+
+.tariff-card p {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 4px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+thead {
+  background: #F7F9FC;
+}
+
+th {
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+td {
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  color: #2E2E2E;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+.actions button:first-child {
+  background: rgba(95, 158, 160, 0.15);
+  color: #5F9EA0;
+  border: 1px solid #5F9EA0;
+}
+
+.actions .danger {
+  background: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #FFFFFF;
+  width: 420px;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 16px;
+}
+
+.modal-content h4 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  color: #2E2E2E;
+}
+
+.modal-content label {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 12px;
+  display: block;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.modal-content div > input {
+  width: calc(33% - 6px);
+  margin-right: 6px;
+  margin-top: 6px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: #5F9EA0;
+  color: #FFFFFF;
+  border: none;
+}
+
+.modal-actions button:last-child {
+  background: transparent;
+  border: 1px solid #E5E7EB;
+  color: #6B7280;
+}

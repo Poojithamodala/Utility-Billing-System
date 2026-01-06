@@ -1,0 +1,91 @@
+<div class="page">
+
+  <h2>Manage Tariff Plans</h2>
+
+  <!-- Utility Tabs -->
+  <div class="tabs">
+    <button
+      *ngFor="let u of utilities"
+      (click)="loadTariffs(u)"
+      [class.active]="u === activeUtility">
+      {{ u }}
+    </button>
+  </div>
+
+  <p *ngIf="loading">Loading tariffs...</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <!-- Tariff Cards -->
+  <div class="tariff-cards" *ngIf="!loading && tariffs.length">
+
+    <div class="tariff-card" *ngFor="let tariff of tariffs">
+
+      <h3>{{ tariff.name }}</h3>
+
+      <p><strong>Fixed Charge:</strong> ₹ {{ tariff.fixedCharge }}</p>
+      <p><strong>Tax:</strong> {{ tariff.taxPercentage }}%</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let slab of tariff.slabs">
+            <td>{{ slab.fromUnit }}</td>
+            <td>{{ slab.toUnit === -1 ? 'Above' : slab.toUnit }}</td>
+            <td>₹ {{ slab.rate }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="actions">
+        <button (click)="editTariff(tariff)">Edit</button>
+        <button class="danger" (click)="deleteTariff(tariff.id)">
+          Delete
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <p *ngIf="!loading && tariffs.length === 0">
+    No tariffs found for {{ activeUtility }}
+  </p>
+
+</div>
+
+<!-- Edit Modal -->
+<div class="modal" *ngIf="editingTariff">
+
+  <div class="modal-content">
+
+    <h3>Edit Tariff</h3>
+
+    <label>Name</label>
+    <input [(ngModel)]="editingTariff.name">
+
+    <label>Fixed Charge</label>
+    <input type="number" [(ngModel)]="editingTariff.fixedCharge">
+
+    <label>Tax %</label>
+    <input type="number" [(ngModel)]="editingTariff.taxPercentage">
+
+    <h4>Slabs</h4>
+    <div *ngFor="let slab of editingTariff.slabs">
+      <input type="number" [(ngModel)]="slab.fromUnit" placeholder="From">
+      <input type="number" [(ngModel)]="slab.toUnit" placeholder="To">
+      <input type="number" [(ngModel)]="slab.rate" placeholder="Rate">
+    </div>
+
+    <div class="modal-actions">
+      <button (click)="updateTariff()">Save</button>
+      <button (click)="editingTariff = null">Cancel</button>
+    </div>
+
+  </div>
+
+</div>

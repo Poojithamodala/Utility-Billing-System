@@ -1,6 +1,7 @@
 package com.utility.service;
 
 import com.utility.dto.ConnectionRequestByConsumer;
+import com.utility.dto.ConsumerGrowthResponse;
 import com.utility.dto.ConsumerRegistrationRequestResponse;
 import com.utility.dto.ConsumerRequest;
 import com.utility.dto.ConsumerResponse;
@@ -29,4 +30,6 @@ public interface ConsumerService {
 	Mono<ConsumerResponse> getMyProfile(String username);
 	Mono<ConsumerResponse> updateConsumer(String id, ConsumerRequest dto);
 	Mono<Void> deleteConsumer(String id);
+	
+	Flux<ConsumerGrowthResponse> getConsumerGrowth();
 }

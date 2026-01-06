@@ -2,6 +2,7 @@ package com.utility.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.utility.config.AuthClient;
+import com.utility.config.ConnectionClient;
 import com.utility.dto.ConnectionRequestByConsumer;
 import com.utility.dto.ConsumerApprovedEvent;
+import com.utility.dto.ConsumerGrowthResponse;
 import com.utility.dto.ConsumerRegistrationRequestResponse;
 import com.utility.dto.ConsumerRejectedEvent;
 import com.utility.dto.ConsumerRequest;
@@ -39,32 +42,49 @@ public class ConsumerServiceImpl implements ConsumerService {
 	private final ConsumerRequestRepository requestRepository;
 	private final ConnectionRequestRepository connectionRequestRepo;
     private final AuthClient authClient;
+    private final ConnectionClient connectionClient;
     private final JwtUtil jwtUtil;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     
     @Override
     public Mono<Void> submitRegistrationRequest(ConsumerRequest request) {
 
-        return requestRepository.existsByEmail(request.getEmail())
-            .flatMap(exists -> {
-                if (exists) {
-                    return Mono.error(
-                        new RuntimeException("Request already exists for this email")
-                    );
-                }
+        String email = request.getEmail().trim().toLowerCase();
 
-                ConsumerRegistrationRequest regRequest =
+        //Check if already an approved consumer
+        return repository.findByEmail(email)
+            .flatMap(existingConsumer ->
+                Mono.error(new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "You already have an approved account. Please login."
+                ))
+            )
+
+            //If not approved, check pending request
+            .switchIfEmpty(
+            		requestRepository.findByEmail(email)
+                    .flatMap(existingRequest -> {
+                        if (existingRequest.getStatus() == RequestStatus.PENDING) {
+                            return Mono.error(new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "Registration request already submitted. Please wait for approval."
+                            ));
+                        }
+                        return Mono.empty();
+                    })
+            )
+            .then(
+                requestRepository.save(
                     ConsumerRegistrationRequest.builder()
                         .name(request.getName().trim())
-                        .email(request.getEmail().trim().toLowerCase())
+                        .email(email)
                         .phone(request.getPhone().trim())
                         .address(request.getAddress().trim())
                         .status(RequestStatus.PENDING)
                         .createdAt(LocalDateTime.now())
-                        .build();
-
-                return requestRepository.save(regRequest).then();
-            });
+                        .build()
+                ).then()
+            );
     }
     
 	@Override
@@ -104,6 +124,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                     .email(req.getEmail())
                     .phone(req.getPhone())
                     .address(req.getAddress())
+                    .createdAt(LocalDateTime.now()) 
                     .build();
 
                 return repository.save(consumer)
@@ -166,36 +187,44 @@ public class ConsumerServiceImpl implements ConsumerService {
 	
 	@Override
 	public Mono<Void> requestConnection(ConnectionRequestByConsumer request, String authHeader) {
-		String token = authHeader.substring(7);
-		String username = jwtUtil.extractUsername(token);
-
+	    String token = authHeader.substring(7);
+	    String username = jwtUtil.extractUsername(token);
 		return repository.findByUsername(username)
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer not found")))
 				.flatMap(consumer -> {
 					String consumerId = consumer.getId();
-					
-					// Check if pending request exists
-					return connectionRequestRepo.existsByConsumerIdAndUtilityTypeAndStatus(consumerId,
-							request.getUtilityType(), RequestStatus.PENDING).flatMap(exists -> {
-								if (exists) {
+					// ACTIVE connection check
+					return connectionClient.hasActiveConnection(consumerId, request.getUtilityType())
+							.flatMap(activeExists -> {
+								if (activeExists) {
+									return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
+											"You already have an active connection for this utility"));
+								}
+								// PENDING request check
+								return connectionRequestRepo.existsByConsumerIdAndUtilityTypeAndStatus(consumerId,
+										request.getUtilityType(), RequestStatus.PENDING);
+							}).flatMap(pendingExists -> {
+								if (pendingExists) {
 									return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
 											"Pending connection request already exists for this utility"));
 								}
-
-		                    //Save request
-		                    return connectionRequestRepo.save(
-		                        ConnectionRequestEntity.builder()
-		                            .consumerId(consumerId)
-		                            .utilityType(request.getUtilityType())
-		                            .tariffPlanId(request.getTariffPlanId())
-		                            .billingCycle(request.getBillingCycle())
-		                            .status(RequestStatus.PENDING)
-		                            .requestDate(LocalDate.now())
-		                            .build()
-		                    ).then();
-		                });
-		        });
-		}
+	                    //Save connection request
+	                    return connectionRequestRepo
+	                        .save(
+	                            ConnectionRequestEntity.builder()
+	                                .consumerId(consumerId)
+	                                .consumerEmail(consumer.getEmail())
+	                                .utilityType(request.getUtilityType())
+	                                .tariffPlanId(request.getTariffPlanId())
+	                                .billingCycle(request.getBillingCycle())
+	                                .status(RequestStatus.PENDING)
+	                                .requestDate(LocalDate.now())
+	                                .build()
+	                        )
+	                        .then();
+	                });
+	        });
+	}
 	
 	@Override
 	public Flux<ConnectionRequestEntity> getRequestsByStatus(RequestStatus status) {
@@ -355,6 +384,18 @@ public class ConsumerServiceImpl implements ConsumerService {
                         HttpStatus.NOT_FOUND, "Consumer not found or already deleted")))
                 .flatMap(consumer -> repository.delete(consumer));
     }
+    
+	@Override
+	public Flux<ConsumerGrowthResponse> getConsumerGrowth() {
+		return repository.findAll()
+				.filter(consumer -> consumer.getCreatedAt() != null)
+				// group by Year-Month
+				.groupBy(consumer -> consumer.getCreatedAt().getYear() + "-"
+						+ String.format("%02d", consumer.getCreatedAt().getMonthValue()))
+				// count consumers per month
+				.flatMap(group -> group.count().map(count -> new ConsumerGrowthResponse(group.key(), count)))
+				.sort(Comparator.comparing(ConsumerGrowthResponse::getMonth));
+	}
     
     private ConsumerResponse mapToResponse(Consumer consumer) {
         return ConsumerResponse.builder()

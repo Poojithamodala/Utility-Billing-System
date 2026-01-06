@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/requests/{id}/approve").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/requests/{id}/reject").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/request-connection").hasRole("CONSUMER")
+                .pathMatchers(HttpMethod.POST, "/consumer-service/consumers/reports/growth").hasRole("ADMIN")
                 .pathMatchers("/consumer-service/consumers/profile").authenticated()
                 .pathMatchers(HttpMethod.POST, "/consumer-service/consumers").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.PUT, "/consumer-service/consumers/**").hasRole("ADMIN")
@@ -59,6 +60,8 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, "/connection-service/connections/**").hasAnyRole("ADMIN", "CONSUMER", "BILLING_OFFICER")
                 .pathMatchers(HttpMethod.POST, "/connection-service/tariffs").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.GET, "/connection-service/tariffs/utility/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")
+                .pathMatchers(HttpMethod.GET, "/connection-service/tariffs/{id}").hasRole("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, "/connection-service/tariffs/{id}").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.GET, "/connection-service/tariffs/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")
                 
                 //meter reading service
@@ -67,11 +70,13 @@ public class SecurityConfig {
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings").hasAnyRole("ADMIN", "BILLING_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/connection/**").hasAnyRole("ADMIN", "BILLING_OFFICER", "CONSUMER")
 				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/*").hasAnyRole("ADMIN", "BILLING_OFFICER")
+				.pathMatchers(HttpMethod.GET, "/meter-reading-service/meter-readings/consumption/utility").hasAnyRole("ADMIN", "BILLING_OFFICER")
 				
 				//billing service
 				.pathMatchers(HttpMethod.POST, "/billing-service/bills/generate").hasAnyRole("ADMIN", "BILLING_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/billing-service/bills").hasAnyRole("BILLING_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/billing-service/bills/outstanding").hasRole("ACCOUNTS_OFFICER")
+				.pathMatchers(HttpMethod.GET, "/billing-service/bills/outstanding/total").hasAnyRole("ADMIN", "ACCOUNTS_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/billing-service/bills/consumer/{consumerId}").hasAnyRole("ADMIN", "CONSUMER", "ACCOUNTS_OFFICER")
 				
 				//payment service
@@ -79,6 +84,7 @@ public class SecurityConfig {
 				.pathMatchers(HttpMethod.GET, "/payment-service/payments").hasAnyRole("ACCOUNTS_OFFICER")
 				.pathMatchers(HttpMethod.GET, "/payment-service/payments/bill/**").hasAnyRole("ADMIN", "ACCOUNTS_OFFICER", "CONSUMER")
 				.pathMatchers(HttpMethod.GET, "/payment-service/payments/consumer/**").hasAnyRole("ADMIN", "ACCOUNTS_OFFICER", "CONSUMER")
+				.pathMatchers(HttpMethod.GET, "/payment-service/payments/revenue/monthly").hasRole("ADMIN")
 
                 .anyExchange().authenticated()
             )

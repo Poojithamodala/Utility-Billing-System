@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topbar',
@@ -9,4 +10,12 @@ import { Component } from '@angular/core';
 })
 export class Topbar {
   role = localStorage.getItem('role');
+
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/login']);
+    this.cdr.detectChanges();
+  }
 }

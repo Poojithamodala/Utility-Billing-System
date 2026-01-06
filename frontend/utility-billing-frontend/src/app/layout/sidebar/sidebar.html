@@ -2,10 +2,12 @@
 
   <h2 class="logo">UtilitySys</h2>
   <nav *ngIf="role === 'ADMIN'">
-    <a routerLink="/admin/home" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/admin/home" routerLinkActive="active">Dashboard & Reports</a>
     <a routerLink="/admin/requests" routerLinkActive="active">Consumer Requests</a>
     <a routerLink="/admin/connection-requests" routerLinkActive="active">Connection Requests</a>
+    <a routerLink="/admin/create-tariffs" routerLinkActive="active">Create Tariffs</a>
     <a routerLink="/admin/consumers" routerLinkActive="active">Manage Consumers</a>
+    <a routerLink="/admin/manage-tariffs" routerLinkActive="active">Manage Tariffs</a>
   </nav>
 
   <nav *ngIf="role === 'BILLING_OFFICER'">
@@ -29,7 +31,5 @@
     <a routerLink="/consumer/bills" routerLinkActive="active">Billing</a>
     <a routerLink="/consumer/payments" routerLinkActive="active">Payment History</a>
   </nav>
-
-  <button class="logout" (click)="logout()">Logout</button>
 
 </div>

@@ -10,12 +10,4 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class Sidebar {
   role = localStorage.getItem('role');
-
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
-
-  logout() {
-    localStorage.clear();
-    this.router.navigate(['/login']);
-    this.cdr.detectChanges();
-  }
 }

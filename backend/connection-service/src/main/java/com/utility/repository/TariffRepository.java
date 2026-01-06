@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface TariffRepository extends ReactiveMongoRepository<TariffPlan, String> {
 	Flux<TariffPlan> findByUtilityType(UtilityType utilityType);
-
 	Mono<Boolean> existsByUtilityTypeAndName(UtilityType utilityType, String name);
 
 }

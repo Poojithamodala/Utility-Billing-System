@@ -12,6 +12,7 @@ import com.utility.dto.ConnectionRequest;
 import com.utility.dto.ConnectionResponse;
 import com.utility.model.Connection;
 import com.utility.model.ConnectionStatus;
+import com.utility.model.UtilityType;
 import com.utility.repository.ConnectionRepository;
 import com.utility.repository.TariffRepository;
 import com.utility.service.ConnectionService;
@@ -115,22 +116,11 @@ public class ConnectionServiceImpl implements ConnectionService {
 	}
 
 	@Override
-	public Flux<ConnectionResponse> getConnectionsByConsumer(String consumerId) {
-
-		//Validate consumer exists (has at least one connection ever)
-		return repository.findByConsumerId(consumerId)
-				.switchIfEmpty(Flux.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
-						"No connections found for the given consumer")))
-
-				//Return only ACTIVE connections
-				.filter(connection -> connection.getStatus() == ConnectionStatus.ACTIVE)
-
-				//Handle case where consumer has only inactive connections
-				.switchIfEmpty(Flux.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
-						"No active connections found for the given consumer")))
-
-				//Map to response
-				.map(this::toResponse);
+	public Flux<ConnectionResponse> getConnectionsByConsumer(String consumerId,UtilityType utilityType) {
+	    return repository.findByConsumerId(consumerId)
+	        .filter(c -> c.getStatus() == ConnectionStatus.ACTIVE)
+	        .filter(c -> utilityType == null || c.getUtilityType() == utilityType)
+	        .map(this::toResponse);
 	}
 
 	@Override

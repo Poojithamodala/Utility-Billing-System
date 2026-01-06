@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -14,10 +15,10 @@ import com.utility.dto.ApproveConnectionRequest;
 import com.utility.dto.ConnectionRequest;
 import com.utility.dto.ConnectionResponse;
 import com.utility.model.Connection;
+import com.utility.model.UtilityType;
 import com.utility.service.ConnectionService;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,7 +29,7 @@ import reactor.core.publisher.Mono;
 public class ConnectionController {
 
 	private final ConnectionService service;
-	
+
 	@PostMapping("/approve")
 	public Mono<Connection> approve(@RequestBody @Valid ApproveConnectionRequest request,
 			@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -47,9 +48,9 @@ public class ConnectionController {
 	}
 
 	@GetMapping("/consumer/{consumerId}")
-	public Flux<ConnectionResponse> byConsumer(
-			@PathVariable @NotBlank(message = "Consumer ID cannot be blank") String consumerId) {
-		return service.getConnectionsByConsumer(consumerId);
+	public Flux<ConnectionResponse> byConsumer(@PathVariable String consumerId,
+			@RequestParam(required = false) UtilityType utilityType) {
+		return service.getConnectionsByConsumer(consumerId, utilityType);
 	}
 
 	@GetMapping("/{connectionId}")

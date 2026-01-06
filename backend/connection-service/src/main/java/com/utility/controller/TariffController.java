@@ -2,9 +2,11 @@ package com.utility.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +37,18 @@ public class TariffController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'BILLING_OFFICER', 'CONSUMER')")
 	public Flux<TariffPlan> byUtility(@PathVariable UtilityType utilityType) {
 		return service.getTariffsByUtility(utilityType);
+	}
+
+	@PutMapping("/{id}")
+	public Mono<ResponseEntity<String>> update(@PathVariable String id, @RequestBody TariffPlan tariff) {
+		return service.updateTariff(id, tariff).map(updated -> ResponseEntity.ok("Tariff updated successfully"))
+				.onErrorResume(ex -> Mono.just(ResponseEntity.badRequest().body(ex.getMessage())));
+	}
+
+	@DeleteMapping("/{id}")
+	public Mono<ResponseEntity<String>> delete(@PathVariable String id) {
+		return service.deleteTariff(id).thenReturn(ResponseEntity.ok("Tariff deleted successfully"))
+				.onErrorResume(ex -> Mono.just(ResponseEntity.badRequest().body(ex.getMessage())));
 	}
 
 	@GetMapping("/{id}")

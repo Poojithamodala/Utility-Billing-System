@@ -20,6 +20,9 @@ import { BillingOfficerBills } from './components/billing-officer/billing-office
 import { AccountOfficerDashboard } from './components/account-officer/account-officer-dashboard/account-officer-dashboard';
 import { AccountsPayments } from './components/account-officer/accounts-payments/accounts-payments';
 import { OutstandingBills } from './components/account-officer/outstanding-bills/outstanding-bills';
+import { CreateTariff } from './components/admin/create-tariff/create-tariff';
+import { ManageTariff } from './components/admin/manage-tariff/manage-tariff';
+import { AdminReports } from './components/admin/admin-reports/admin-reports';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -30,10 +33,13 @@ export const routes: Routes = [
         path: 'admin',
         component: AppLayout,
         children: [
-            { path: 'home', component: AdminHome },
+            { path: 'home', component: AdminReports },
             { path: 'requests', component: AdminRequests },
             { path: 'consumers', component: ApprovedConsumers},
-            { path: 'connection-requests', component: ConnectionRequests}
+            { path: 'connection-requests', component: ConnectionRequests},
+            { path: 'create-tariffs', component: CreateTariff},
+            { path: 'manage-tariffs', component: ManageTariff},
+            { path: 'reports', component: AdminReports}
         ]
     },
     {

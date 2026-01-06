@@ -1,5 +1,6 @@
 .consumers-page {
   padding: 24px;
+  background: #F7F9FC;
 }
 
 .title {
@@ -12,6 +13,16 @@
 .subtitle {
   color: #6B7280;
   margin-bottom: 24px;
+}
+
+.state-text {
+  color: #6B7280;
+  margin-top: 20px;
+}
+
+.error-text {
+  color: #DC2626;
+  margin-top: 20px;
 }
 
 .table-card {
@@ -59,14 +70,9 @@ tr:last-child td {
   font-weight: 500;
 }
 
-.state-text {
-  color: #6B7280;
-  margin-top: 20px;
-}
-
-.error-text {
-  color: #DC2626;
-  margin-top: 20px;
+.actions {
+  display: flex;
+  gap: 8px;
 }
 
 .edit-btn {
@@ -76,6 +82,17 @@ tr:last-child td {
   padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-btn {
+  background: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
 }
 
 .modal-backdrop {
@@ -85,6 +102,7 @@ tr:last-child td {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 50;
 }
 
 .modal {
@@ -97,6 +115,7 @@ tr:last-child td {
 
 .modal h2 {
   margin-bottom: 16px;
+  color: #2E2E2E;
 }
 
 .modal label {
@@ -113,6 +132,12 @@ tr:last-child td {
   border-radius: 10px;
   border: 1px solid #E5E7EB;
   margin-top: 4px;
+  font-size: 14px;
+}
+
+.modal textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .modal-actions {
@@ -128,6 +153,7 @@ tr:last-child td {
   border: none;
   padding: 10px 16px;
   border-radius: 10px;
+  font-size: 14px;
 }
 
 .modal-actions .cancel {
@@ -135,25 +161,13 @@ tr:last-child td {
   border: 1px solid #E5E7EB;
   padding: 10px 16px;
   border-radius: 10px;
+  font-size: 14px;
 }
 
 .error {
   color: #DC2626;
   margin-top: 10px;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.delete-btn {
-  background: rgba(220, 38, 38, 0.1);
-  color: #DC2626;
-  border: 1px solid rgba(220, 38, 38, 0.3);
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
+  font-size: 13px;
 }
 
 .modal.danger h2 {

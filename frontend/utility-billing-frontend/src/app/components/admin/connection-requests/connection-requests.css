@@ -1,36 +1,88 @@
 .admin-page {
-  padding: 30px;
+  padding: 24px;
+  background: #F7F9FC;
+}
+
+.admin-page h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2E2E2E;
+  margin-bottom: 20px;
+}
+
+.admin-page p {
+  color: #6B7280;
+  margin-top: 16px;
+}
+
+.error {
+  color: #DC2626;
+  margin-top: 16px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+thead {
+  background: #F7F9FC;
 }
 
-input {
-  padding: 6px;
-  width: 130px;
+th {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #2E2E2E;
+  border-bottom: 1px solid #F1F5F9;
+  vertical-align: middle;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+input[type="text"] {
+  width: 140px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  font-size: 13px;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #5F9EA0;
 }
 
 button {
-  padding: 6px 12px;
-  background-color: #5f9ea0;
-  color: white;
+  background: #5F9EA0;
+  color: #FFFFFF;
   border: none;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #4b8b8f;
+  opacity: 0.9;
 }
 
-.error {
-  color: red;
+.admin-page p:last-child {
+  font-style: italic;
+  color: #6B7280;
 }

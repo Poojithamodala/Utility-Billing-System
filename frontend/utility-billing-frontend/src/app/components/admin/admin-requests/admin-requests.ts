@@ -66,6 +66,7 @@ export class AdminRequests {
     this.selectedRequestId = id;
     this.rejectReason = '';
     this.showRejectModal = true;
+    this.cdr.detectChanges();
   }
 
   reject() {
@@ -79,7 +80,6 @@ export class AdminRequests {
       next: () => {
         this.showRejectModal = false;
         this.loadRequests();
-        this.cdr.detectChanges();
       },
       error: () => alert('Rejection failed')
     });
@@ -87,5 +87,6 @@ export class AdminRequests {
 
   closeModal() {
     this.showRejectModal = false;
+    this.cdr.detectChanges();
   }
 }

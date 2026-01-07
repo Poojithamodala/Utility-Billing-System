@@ -9,12 +9,16 @@ import com.utility.dto.BillingCycle;
 import com.utility.dto.RequestStatus;
 import com.utility.dto.UtilityType;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Document(collection = "connection_requests")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConnectionRequestEntity {
 
 	@Id

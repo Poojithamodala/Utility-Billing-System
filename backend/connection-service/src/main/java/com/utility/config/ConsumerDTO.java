@@ -1,8 +1,12 @@
 package com.utility.config;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConsumerDTO {
     private String id;
     private String email;

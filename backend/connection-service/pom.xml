@@ -118,6 +118,48 @@
 
 	<build>
 		<plugins>
+		<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<executions>
+
+					<!-- Attach JaCoCo agent -->
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+
+					<!-- Generate report -->
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+
+                <!-- INCLUDE ONLY controller & service impl -->
+                <includes>
+                    <include>**/controller/**</include>
+                    <include>**/service/impl/**</include>
+                </includes>
+
+                <!-- EXCLUDE everything else -->
+                <excludes>
+                    <exclude>**/dto/**</exclude>
+                    <exclude>**/model/**</exclude>
+                    <exclude>**/entity/**</exclude>
+                    <exclude>**/repository/**</exclude>
+                </excludes>
+
+            </configuration>
+					</execution>
+					
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

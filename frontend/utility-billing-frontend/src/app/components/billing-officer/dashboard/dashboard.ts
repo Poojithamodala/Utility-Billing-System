@@ -9,9 +9,9 @@ import { Component } from '@angular/core';
 })
 export class Dashboard {
   stats = [
-    { title: 'Active Connections', value: 128 },
-    { title: 'Readings Pending', value: 24 },
-    { title: 'Bills Generated (This Month)', value: 96 },
-    { title: 'Bills Yet to Generate', value: 32 }
+    { title: 'Active Connections', value: 33 },
+    { title: 'Readings Pending', value: 16 },
+    { title: 'Bills Generated (This Month)', value: 60 },
+    { title: 'Bills Yet to Generate', value: 20 }
   ];
 }

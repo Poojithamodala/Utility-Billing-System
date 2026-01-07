@@ -10,10 +10,10 @@ import { Component } from '@angular/core';
 })
 export class ConsumerHome {
   summary = {
-    activeConnections: 0,
-    pendingBills: 0,
-    totalDue: 0,
-    lastPayment: null as null | { amount: number; date: string }
+    activeConnections: 4,
+    pendingBills: 1,
+    totalDue: 700,
+    lastPayment: null as null | { amount: 700; date: string }
   };
 
   recentBills: any[] = [];

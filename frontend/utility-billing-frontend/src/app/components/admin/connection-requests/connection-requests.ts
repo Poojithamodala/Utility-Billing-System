@@ -14,6 +14,11 @@ export class ConnectionRequests {
   loading = true;
   error = '';
 
+  showPopup = false;
+  popupTitle = '';
+  popupMessage = '';
+  popupType: 'success' | 'error' | 'warning' = 'warning';
+
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
@@ -37,9 +42,25 @@ export class ConnectionRequests {
     });
   }
 
+  openPopup(title: string, message: string, type: 'success' | 'error' | 'warning') {
+    this.popupTitle = title;
+    this.popupMessage = message;
+    this.popupType = type;
+    this.showPopup = true;
+    this.cdr.detectChanges();
+  }
+
+  closePopup() {
+    this.showPopup = false;
+  }
+
   approve(request: any) {
-    if (!request.meterNumber) {
-      alert('Enter meter number');
+    if (!request.meterNumber || !request.meterNumber.trim()) {
+      this.openPopup(
+        'Validation Error',
+        'Meter number is required before approval.',
+        'warning'
+      );
       return;
     }
 
@@ -53,11 +74,19 @@ export class ConnectionRequests {
       payload
     ).subscribe({
       next: () => {
-        alert('✅ Connection approved');
-        this.loadRequests(); 
+        this.openPopup(
+          'Approved',
+          '✅ Connection approved successfully.',
+          'success'
+        );
+        this.loadRequests();
       },
       error: err => {
-        alert(err.error?.message || 'Approval failed');
+        this.openPopup(
+          'Approval Failed',
+          err.error?.message || 'Unable to approve connection.',
+          'error'
+        );
       }
     });
   }

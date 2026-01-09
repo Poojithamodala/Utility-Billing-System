@@ -86,3 +86,76 @@ button:hover {
   font-style: italic;
   color: #6B7280;
 }
+
+/* Popup overlay */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal */
+.modal {
+  background: #fff;
+  padding: 22px;
+  width: 340px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  animation: scaleIn 0.2s ease-in-out;
+}
+
+/* Title colors */
+.modal h3 {
+  margin-top: 0;
+}
+
+.modal h3.success {
+  color: #2e7d32;
+}
+
+.modal h3.error {
+  color: #c62828;
+}
+
+.modal h3.warning {
+  color: #ed6c02;
+}
+
+.modal p {
+  margin: 12px 0 18px;
+  color: #444;
+}
+
+/* Actions */
+.modal-actions {
+  text-align: right;
+}
+
+.modal-actions .confirm {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-actions .confirm:hover {
+  background: #115293;
+}
+
+/* Animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

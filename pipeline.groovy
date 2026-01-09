@@ -36,7 +36,7 @@ pipeline {
                 stage('Eureka Server') {
                     steps {
                         dir('backend/eureka-server') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -44,7 +44,7 @@ pipeline {
                 stage('Config Server') {
                     steps {
                         dir('backend/config-server') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -52,7 +52,7 @@ pipeline {
                 stage('API Gateway') {
                     steps {
                         dir('backend/api-gateway') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -60,7 +60,7 @@ pipeline {
                 stage('Auth Service') {
                     steps {
                         dir('backend/auth-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -68,7 +68,7 @@ pipeline {
                 stage('Consumer Service') {
                     steps {
                         dir('backend/consumer-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -76,7 +76,7 @@ pipeline {
                 stage('Connection Service') {
                     steps {
                         dir('backend/connection-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -84,7 +84,7 @@ pipeline {
                 stage('Meter Reading Service') {
                     steps {
                         dir('backend/meter-reading-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -92,7 +92,7 @@ pipeline {
                 stage('Billing Service') {
                     steps {
                         dir('backend/billing-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -100,7 +100,7 @@ pipeline {
                 stage('Payment Service') {
                     steps {
                         dir('backend/payment-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }
@@ -108,7 +108,7 @@ pipeline {
                 stage('Notification Service') {
                     steps {
                         dir('backend/notification-service') {
-                            bat 'mvn clean package -Dmaven.test.skip=true'
+                            bat 'mvn package'
                         }
                     }
                 }

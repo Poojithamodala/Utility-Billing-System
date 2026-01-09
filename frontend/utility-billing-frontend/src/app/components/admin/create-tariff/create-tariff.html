@@ -57,6 +57,27 @@
       {{ loading ? 'Creating...' : 'Create Tariff' }}
     </button>
 
+    <div class="modal-backdrop" *ngIf="showPopup">
+  <div class="modal">
+
+    <h3
+      [ngClass]="{
+        success: popupType === 'success',
+        error: popupType === 'error',
+        warning: popupType === 'warning'
+      }"
+    >
+      {{ popupTitle }}
+    </h3>
+
+    <p>{{ popupMessage }}</p>
+
+    <div class="modal-actions">
+      <button class="confirm" (click)="closePopup()">OK</button>
+    </div>
+
+  </div>
+
     <p class="success" *ngIf="message">{{ message }}</p>
     <p class="error" *ngIf="error">{{ error }}</p>
 

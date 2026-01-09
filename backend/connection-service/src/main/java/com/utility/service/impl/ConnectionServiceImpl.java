@@ -30,90 +30,101 @@ public class ConnectionServiceImpl implements ConnectionService {
 	private final ConsumerClient consumerClient;
 	
 	@Override
-	public Mono<Connection> approveConnection(
-	        ApproveConnectionRequest request,
-	        String authHeader) {
-
+	public Mono<Connection> approveConnection(ApproveConnectionRequest request, String authHeader) {
 	    return consumerClient.getRequest(request.getRequestId(), authHeader)
 	        .flatMap(req ->
-	            consumerClient.getConsumerById(req.getConsumerId(), authHeader)
-	                .flatMap(consumer -> {
+	            repository.existsByMeterNumberAndUtilityType(
+	                    request.getMeterNumber(),
+	                    req.getUtilityType()
+	            ).flatMap(exists -> {
 
-	                    Connection connection = Connection.builder()
-	                        .consumerId(req.getConsumerId())
-	                        .consumerEmail(consumer.getEmail()) 
-	                        .utilityType(req.getUtilityType())
-	                        .meterNumber(request.getMeterNumber())
-	                        .tariffPlanId(req.getTariffPlanId())
-	                        .billingCycle(req.getBillingCycle())
-	                        .status(ConnectionStatus.ACTIVE)
-	                        .connectionDate(LocalDate.now())
-	                        .build();
+	                if (exists) {
+	                    return Mono.error(
+	                        new RuntimeException(
+	                            "Meter number already assigned to another consumer"
+	                        )
+	                    );
+	                }
 
-	                    return repository.save(connection)
-	                        .flatMap(saved ->
-	                            consumerClient
-	                                .markApproved(request.getRequestId(), authHeader)
-	                                .thenReturn(saved)
-	                        );
-	                })
+	                return consumerClient.getConsumerById(req.getConsumerId(), authHeader)
+	                    .flatMap(consumer -> {
+
+	                        Connection connection = Connection.builder()
+	                            .consumerId(req.getConsumerId())
+	                            .consumerEmail(consumer.getEmail())
+	                            .utilityType(req.getUtilityType())
+	                            .meterNumber(request.getMeterNumber())
+	                            .tariffPlanId(req.getTariffPlanId())
+	                            .billingCycle(req.getBillingCycle())
+	                            .status(ConnectionStatus.ACTIVE)
+	                            .connectionDate(LocalDate.now())
+	                            .build();
+
+	                        return repository.save(connection)
+	                            .flatMap(saved ->
+	                                consumerClient
+	                                    .markApproved(request.getRequestId(), authHeader)
+	                                    .thenReturn(saved)
+	                            );
+	                    });
+	            })
 	        );
 	}
 
-	@Override
-	public Mono<ConnectionResponse> createConnection(ConnectionRequest request, String authHeader) {
-
-		return consumerClient.validateConsumerExists(request.getConsumerId(), authHeader)
-
-				//Tariff validation
-				.then(tariffRepository.findById(request.getTariffPlanId()).switchIfEmpty(
-						Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Tariff plan not found"))))
-				.flatMap(tariff -> {
-					if (!tariff.getUtilityType().equals(request.getUtilityType())) {
-						return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST,
-								"Tariff plan utility type does not match connection utility type"));
-					}
-					return Mono.just(request);
-				})
-
-				//Meter uniqueness
-				.flatMap(req -> repository.existsByUtilityTypeAndMeterNumber(req.getUtilityType(), req.getMeterNumber())
-						.flatMap(meterExists -> {
-							if (meterExists) {
-								return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
-										"Meter already registered for this utility"));
-							}
-							return Mono.just(req);
-						}))
-
-				//One ACTIVE connection per utility
-				.flatMap(req -> repository.existsByConsumerIdAndUtilityTypeAndStatus(req.getConsumerId(),
-						req.getUtilityType(), ConnectionStatus.ACTIVE).flatMap(activeExists -> {
-							if (activeExists) {
-								return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
-										"Active connection already exists for this utility"));
-							}
-							return Mono.just(req);
-						}))
-
-				//Save
-				.flatMap(req ->
-			    consumerClient.getConsumerById(req.getConsumerId(), authHeader)
-			        .map(consumer -> Connection.builder()
-			            .consumerId(req.getConsumerId())
-			            .consumerEmail(consumer.getEmail()) 
-			            .utilityType(req.getUtilityType())
-			            .meterNumber(req.getMeterNumber())
-			            .tariffPlanId(req.getTariffPlanId())
-			            .billingCycle(req.getBillingCycle())
-			            .status(ConnectionStatus.ACTIVE)
-			            .connectionDate(LocalDate.now())
-			            .build()
-			        )
-			        .flatMap(repository::save)
-			)
-			.map(this::toResponse);
-	}
+//	@Override
+//	public Mono<ConnectionResponse> createConnection(ConnectionRequest request, String authHeader) {
+//
+//		return consumerClient.validateConsumerExists(request.getConsumerId(), authHeader)
+//
+//				//Tariff validation
+//				.then(tariffRepository.findById(request.getTariffPlanId()).switchIfEmpty(
+//						Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Tariff plan not found"))))
+//				.flatMap(tariff -> {
+//					if (!tariff.getUtilityType().equals(request.getUtilityType())) {
+//						return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST,
+//								"Tariff plan utility type does not match connection utility type"));
+//					}
+//					return Mono.just(request);
+//				})
+//
+//				//Meter uniqueness
+//				.flatMap(req -> repository.existsByUtilityTypeAndMeterNumber(req.getUtilityType(), req.getMeterNumber())
+//						.flatMap(meterExists -> {
+//							if (meterExists) {
+//								return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
+//										"Meter already registered for this utility"));
+//							}
+//							return Mono.just(req);
+//						}))
+//
+//				//One ACTIVE connection per utility
+//				.flatMap(req -> repository.existsByConsumerIdAndUtilityTypeAndStatus(req.getConsumerId(),
+//						req.getUtilityType(), ConnectionStatus.ACTIVE).flatMap(activeExists -> {
+//							if (activeExists) {
+//								return Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
+//										"Active connection already exists for this utility"));
+//							}
+//							return Mono.just(req);
+//						}))
+//
+//				//Save
+//				.flatMap(req ->
+//			    consumerClient.getConsumerById(req.getConsumerId(), authHeader)
+//			        .map(consumer -> Connection.builder()
+//			            .consumerId(req.getConsumerId())
+//			            .consumerEmail(consumer.getEmail()) 
+//			            .utilityType(req.getUtilityType())
+//			            .meterNumber(req.getMeterNumber())
+//			            .tariffPlanId(req.getTariffPlanId())
+//			            .billingCycle(req.getBillingCycle())
+//			            .status(ConnectionStatus.ACTIVE)
+//			            .connectionDate(LocalDate.now())
+//			            .build()
+//			        )
+//			        .flatMap(repository::save)
+//			)
+//			.map(this::toResponse);
+//	}
 
 	@Override
 	public Flux<ConnectionResponse> getConnectionsByConsumer(String consumerId,UtilityType utilityType) {

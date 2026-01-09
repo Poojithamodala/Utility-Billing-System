@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 public interface ConnectionService {
 	Mono<Connection> approveConnection(ApproveConnectionRequest request, String authHeader);
-    Mono<ConnectionResponse> createConnection(ConnectionRequest request, String authHeader);
+//    Mono<ConnectionResponse> createConnection(ConnectionRequest request, String authHeader);
     Flux<ConnectionResponse> getConnectionsByConsumer(String consumerId,UtilityType utilityType);
 //    Flux<ConnectionResponse> getConnectionsByConsumer(String consumerId);
     Flux<ConnectionResponse> getAllConnections();

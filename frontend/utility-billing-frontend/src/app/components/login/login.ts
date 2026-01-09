@@ -31,7 +31,7 @@ export class Login {
       return;
     }
 
-    if (username.length < 3 || username.length > 20) {
+    if (username.length < 3 || username.length > 50) {
       this.errorMessage = 'Username must be 3–20 characters';
       return;
     }

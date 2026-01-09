@@ -51,8 +51,8 @@ class ConsumerControllerTest {
     void requestConsumerRegistration_success() {
 
         ConsumerRequest request = new ConsumerRequest();
-        request.setName("John Doe");
-        request.setEmail("john@example.com");
+        request.setName("Poojitha");
+        request.setEmail("pooja@gmail.com");
         request.setPhone("9876543210");
         request.setAddress("Hyderabad, India");
 
@@ -176,8 +176,8 @@ class ConsumerControllerTest {
     void createConsumer_success() {
 
         ConsumerRequest request = new ConsumerRequest();
-        request.setName("Alice");
-        request.setEmail("alice@example.com");
+        request.setName("Pooja");
+        request.setEmail("pooja@gmail.com");
         request.setPhone("9876543210");
         request.setAddress("Bangalore");
 

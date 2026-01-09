@@ -62,15 +62,15 @@ class ConsumerServiceImplTest {
 	@Test
 	void submitRegistrationRequest_success() {
 	    ConsumerRequest request = new ConsumerRequest();
-	    request.setName("John");
-	    request.setEmail("john@test.com");
+	    request.setName("Pooja");
+	    request.setEmail("pooja@gmail.com");
 	    request.setPhone("9876543210");
 	    request.setAddress("Hyd");
 
-	    when(repository.findByEmail("john@test.com"))
+	    when(repository.findByEmail("pooja@gmail.com"))
 	            .thenReturn(Mono.empty());
 
-	    when(requestRepository.findByEmail("john@test.com"))
+	    when(requestRepository.findByEmail("pooja@gmail.com"))
 	            .thenReturn(Mono.empty());
 
 	    when(requestRepository.save(any()))
@@ -86,13 +86,13 @@ class ConsumerServiceImplTest {
 	void approveRequest_success() {
 	    ConsumerRegistrationRequest req = ConsumerRegistrationRequest.builder()
 	            .id("r1")
-	            .email("a@test.com")
+	            .email("a@gmail.com")
 	            .name("A")
 	            .status(RequestStatus.PENDING)
 	            .build();
 
 	    Consumer savedConsumer = Consumer.builder()
-	            .email("a@test.com")
+	            .email("a@gmail.com")
 	            .build();
 
 	    when(requestRepository.findById("r1"))
@@ -115,7 +115,7 @@ class ConsumerServiceImplTest {
 	void rejectRequest_success() {
 	    ConsumerRegistrationRequest req = ConsumerRegistrationRequest.builder()
 	            .status(RequestStatus.PENDING)
-	            .email("a@test.com")
+	            .email("a@gmail.com")
 	            .name("A")
 	            .build();
 
@@ -133,7 +133,7 @@ class ConsumerServiceImplTest {
 	void requestConnection_success() {
 	    Consumer consumer = Consumer.builder()
 	            .id("c1")
-	            .email("a@test.com")
+	            .email("a@gmail.com")
 	            .build();
 
 	    ConnectionRequestByConsumer req = new ConnectionRequestByConsumer();
@@ -164,7 +164,7 @@ class ConsumerServiceImplTest {
 	@Test
 	void createConsumer_success() {
 	    ConsumerRequest request = new ConsumerRequest();
-	    request.setName("A");
+	    request.setName("Pooja");
 	    request.setEmail("a@test.com");
 	    request.setPhone("9876543210");
 	    request.setAddress("Hyd");

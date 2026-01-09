@@ -30,13 +30,4 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
-    
-//    public String extractConsumerId(String token) {
-//        return Jwts.parserBuilder()
-//                .setSigningKey(key())
-//                .build()
-//                .parseClaimsJws(token)
-//                .getBody()
-//                .get("consumerId", String.class);
-//    }
 }

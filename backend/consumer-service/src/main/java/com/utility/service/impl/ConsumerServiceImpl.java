@@ -45,6 +45,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     private final ConnectionClient connectionClient;
     private final JwtUtil jwtUtil;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private static final String CONSUMER_NOT_FOUND = "message";
     
     @Override
     public Mono<Void> submitRegistrationRequest(ConsumerRequest request) {
@@ -190,7 +191,7 @@ public class ConsumerServiceImpl implements ConsumerService {
 	    String token = authHeader.substring(7);
 	    String username = jwtUtil.extractUsername(token);
 		return repository.findByUsername(username)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer not found")))
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, CONSUMER_NOT_FOUND)))
 				.flatMap(consumer -> {
 					String consumerId = consumer.getId();
 					// ACTIVE connection check
@@ -231,14 +232,12 @@ public class ConsumerServiceImpl implements ConsumerService {
 	    return connectionRequestRepo.findByStatus(status);
 	}
 	
-	// GET /connection-requests/{id}
 	@Override
 	public Mono<ConnectionRequestEntity> getRequestById(String id) {
 		return connectionRequestRepo.findById(id).switchIfEmpty(
 				Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Connection request not found")));
 	}
 
-	// PATCH /connection-requests/{id}/status
 	@Override
 	public Mono<Void> updateRequestStatus(String id, RequestStatus status) {
 		return connectionRequestRepo.findById(id)
@@ -311,7 +310,7 @@ public class ConsumerServiceImpl implements ConsumerService {
             return Mono.error(new RuntimeException("Invalid authentication token"));
         }
         return repository.findByUsername(username)
-                .switchIfEmpty(Mono.error(new RuntimeException("Consumer not found")))
+                .switchIfEmpty(Mono.error(new RuntimeException(CONSUMER_NOT_FOUND)))
                 .map(this::mapToResponse);
     }
     
@@ -332,7 +331,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         }
 
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new RuntimeException("Consumer not found")))
+                .switchIfEmpty(Mono.error(new RuntimeException(CONSUMER_NOT_FOUND)))
                 .flatMap(existing -> {
 
                     // Email duplication check only if email is being updated

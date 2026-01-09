@@ -7,7 +7,7 @@
 
   <div class="register-card">
 
-    <form (ngSubmit)="submit()">
+    <form #registerForm="ngForm" (ngSubmit)="submit()">
 
       <input
         type="text"
@@ -37,7 +37,7 @@
         required>
       </textarea>
 
-      <button type="submit" [disabled]="loading">
+      <button type="submit" [disabled]="registerForm.invalid || loading">
         {{ loading ? 'Submitting...' : 'Submit Registration' }}
       </button>
 

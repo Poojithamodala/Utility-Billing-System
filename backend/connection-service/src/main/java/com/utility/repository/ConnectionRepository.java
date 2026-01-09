@@ -15,7 +15,7 @@ public interface ConnectionRepository extends ReactiveMongoRepository<Connection
 	Flux<Connection> findByConsumerId(String consumerId);
 
 	// Check if a meter already exists for a utility
-	Mono<Boolean> existsByUtilityTypeAndMeterNumber(UtilityType utilityType, String meterNumber);
+	Mono<Boolean> existsByMeterNumberAndUtilityType(String meterNumber, UtilityType utilityType);
 
 	// Check if consumer already has an ACTIVE connection for the same utility
 	Mono<Boolean> existsByConsumerIdAndUtilityTypeAndStatus(String consumerId, UtilityType utilityType,

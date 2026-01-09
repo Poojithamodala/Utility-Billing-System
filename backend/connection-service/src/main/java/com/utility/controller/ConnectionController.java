@@ -36,11 +36,12 @@ public class ConnectionController {
 		return service.approveConnection(request, authHeader);
 	}
 
-	@PostMapping
-	public Mono<ConnectionResponse> create(@RequestBody @Valid ConnectionRequest request, ServerWebExchange exchange) {
-		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-		return service.createConnection(request, authHeader);
-	}
+	/*
+	 * @PostMapping public Mono<ConnectionResponse> create(@RequestBody @Valid
+	 * ConnectionRequest request, ServerWebExchange exchange) { String authHeader =
+	 * exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+	 * return service.createConnection(request, authHeader); }
+	 */
 
 	@GetMapping
 	public Flux<ConnectionResponse> all() {

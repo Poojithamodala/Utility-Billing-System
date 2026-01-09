@@ -30,6 +30,7 @@ import com.utility.repository.BillRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BillingServiceImplTest {
 
@@ -214,18 +215,28 @@ class BillingServiceImplTest {
 
     @Test
     void getOutstandingBills_overdue() {
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+
         Bill bill = Bill.builder()
                 .id("b1")
                 .totalAmount(100)
                 .outstandingAmount(50)
-                .dueDate(LocalDate.now(ZoneId.of("Asia/Kolkata")).minusDays(1))
+                .consumerEmail("a@test.com")
+                .utilityType(UtilityType.ELECTRICITY)
+                .dueDate(today.minusDays(1)) // OVERDUE
                 .build();
 
-        when(repository.findByOutstandingAmountGreaterThan(0))
+        when(repository.findByOutstandingAmountGreaterThanAndDueDateBefore(0, today))
                 .thenReturn(Flux.just(bill));
 
         StepVerifier.create(service.getOutstandingBills())
-                .expectNextCount(1)
+                .assertNext(response -> {
+                    assertEquals("b1", response.getBillId());
+                    assertEquals(50, response.getRemainingAmount());
+                    assertEquals(50, response.getPaidSoFar());
+                    assertEquals(BillStatus.OVERDUE, response.getStatus());
+                })
                 .verifyComplete();
     }
 
@@ -290,14 +301,19 @@ class BillingServiceImplTest {
 
     @Test
     void getTotalOutstanding() {
-        when(repository.findByOutstandingAmountGreaterThan(0))
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+
+        when(repository.findByOutstandingAmountGreaterThanAndDueDateBefore(0, today))
                 .thenReturn(Flux.just(
-                        Bill.builder().outstandingAmount(50).build(),
-                        Bill.builder().outstandingAmount(25).build()
+                        Bill.builder().outstandingAmount(50).dueDate(today.minusDays(2)).build(),
+                        Bill.builder().outstandingAmount(25).dueDate(today.minusDays(1)).build()
                 ));
 
         StepVerifier.create(service.getTotalOutstanding())
-                .expectNextMatches(r -> r.getTotalOutstandingAmount() == 75)
+                .assertNext(response ->
+                        assertEquals(75.0, response.getTotalOutstandingAmount())
+                )
                 .verifyComplete();
     }
 }

@@ -17,5 +17,5 @@ public interface BillRepository extends ReactiveMongoRepository<Bill, String> {
 	Flux<Bill> findByStatus(BillStatus status);
 	Mono<Boolean> existsByMeterReadingId(String meterReadingId);
 	Flux<Bill> findByStatusNotAndDueDateBefore(BillStatus status, LocalDate date);
-	Flux<Bill> findByOutstandingAmountGreaterThan(double amount);
+	Flux<Bill> findByOutstandingAmountGreaterThanAndDueDateBefore(double outstandingAmount, LocalDate date);
 }

@@ -176,13 +176,13 @@ public class BillingServiceImpl implements BillingService {
 	
 	@Override
 	public Flux<OutstandingBillResponse> getOutstandingBills() {
-		LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
-		return repository.findByOutstandingAmountGreaterThan(0).map(bill -> {
-			BillStatus computedStatus = bill.getStatus();
-			if (today.isAfter(bill.getDueDate())) {
-				computedStatus = BillStatus.OVERDUE;
-			}
-			double paidSoFar = bill.getTotalAmount() - bill.getOutstandingAmount();
+	    LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+
+	    return repository
+	        .findByOutstandingAmountGreaterThanAndDueDateBefore(0, today)
+	        .map(bill -> {
+	            double paidSoFar = bill.getTotalAmount() - bill.getOutstandingAmount();
+
 	            return OutstandingBillResponse.builder()
 	                    .billId(bill.getId())
 	                    .consumerEmail(bill.getConsumerEmail())
@@ -191,7 +191,7 @@ public class BillingServiceImpl implements BillingService {
 	                    .paidSoFar(paidSoFar)
 	                    .remainingAmount(bill.getOutstandingAmount())
 	                    .dueDate(bill.getDueDate())
-	                    .status(computedStatus)
+	                    .status(BillStatus.OVERDUE)
 	                    .build();
 	        });
 	}
@@ -220,13 +220,15 @@ public class BillingServiceImpl implements BillingService {
 	}
 	
 	@Override
-    public Mono<TotalOutstandingResponse> getTotalOutstanding() {
-        return repository
-                .findByOutstandingAmountGreaterThan(0)
-                .map(Bill::getOutstandingAmount)
-                .reduce(0.0, Double::sum)
-                .map(TotalOutstandingResponse::new);
-    }
+	public Mono<TotalOutstandingResponse> getTotalOutstanding() {
+	    LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+
+	    return repository
+	            .findByOutstandingAmountGreaterThanAndDueDateBefore(0, today)
+	            .map(Bill::getOutstandingAmount)
+	            .reduce(0.0, Double::sum)
+	            .map(TotalOutstandingResponse::new);
+	}
 
     private BillResponse toResponse(Bill bill) {
 		BillStatus status = bill.getStatus();

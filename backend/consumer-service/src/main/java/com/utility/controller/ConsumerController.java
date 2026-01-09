@@ -40,6 +40,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/consumers")
 @RequiredArgsConstructor
 public class ConsumerController {
+	private static final String MESSAGE_KEY = "message";
 
 	private final ConsumerService consumerService;
 	private final JwtUtil jwtUtil;
@@ -47,7 +48,7 @@ public class ConsumerController {
 	@PostMapping("/request")
 	public Mono<Map<String, String>> requestConsumerRegistration(@Valid @RequestBody ConsumerRequest request) {
 		return consumerService.submitRegistrationRequest(request)
-				.thenReturn(Map.of("message", "Registration request submitted"));
+				.thenReturn(Map.of(MESSAGE_KEY, "Registration request submitted"));
 	}
 	
 	@GetMapping("/requests")
@@ -59,21 +60,24 @@ public class ConsumerController {
 	public Mono<Map<String, String>> approveRequest(@PathVariable String id, ServerWebExchange exchange) {
 		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 		return consumerService.approveRequest(id, authHeader)
-				.thenReturn(Map.of("message", "Consumer approved successfully"));
+				.thenReturn(Map.of(MESSAGE_KEY, "Consumer approved successfully"));
 	}
 	
 	@PostMapping("/requests/{requestId}/reject")
 	public Mono<Map<String, String>> rejectRequest(@PathVariable String requestId,  @Valid @RequestBody RejectConsumerRequest request, Authentication authentication) {
 		return consumerService.rejectRequest(requestId, request.getReason())
-				.thenReturn(Map.of("message", "Consumer registration request rejected"));
+				.thenReturn(Map.of(MESSAGE_KEY, "Consumer registration request rejected"));
 	}
 	
 	@PostMapping("/request-connection")
-	public Mono<String> requestConnection(@RequestBody @Valid ConnectionRequestByConsumer request,
+	public Mono<Map<String, String>> requestConnection(@RequestBody @Valid ConnectionRequestByConsumer request,
 			ServerWebExchange exchange) {
 		String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 		return consumerService.requestConnection(request, authHeader)
-				.thenReturn("Connection request submitted successfully");
+		        .thenReturn(Map.of(
+		            "message",
+		            "Connection request submitted successfully. Please wait for Billing Officer approval."
+		        ));
 	}
 	
 	@GetMapping("/connection-requests")
@@ -128,7 +132,7 @@ public class ConsumerController {
 			return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consumer ID is required"));
 		}
 		return consumerService.deleteConsumer(id)
-				.thenReturn(ResponseEntity.ok(Map.of("message", "Consumer deleted successfully")));
+				.thenReturn(ResponseEntity.ok(Map.of(MESSAGE_KEY, "Consumer deleted successfully")));
 	}
 
 	@GetMapping("/profile")

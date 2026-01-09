@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	private static final String ERROR_KEY = "error";
 
     @ExceptionHandler(ConsumerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -30,12 +31,12 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Validation error");
 
-        return Mono.just(Map.of("error", errorMsg));
+        return Mono.just(Map.of(ERROR_KEY, errorMsg));
     }
     
     @ExceptionHandler(RuntimeException.class)
     public Mono<Map<String, String>> handleRuntime(RuntimeException ex) {
-        return Mono.just(Map.of("error", ex.getMessage()));
+        return Mono.just(Map.of(ERROR_KEY, ex.getMessage()));
     }
     
     @ExceptionHandler(ResponseStatusException.class)
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
         return Mono.just(
                 ResponseEntity
                         .status(ex.getStatusCode())
-                        .body(Map.of("error", ex.getReason()))
+                        .body(Map.of(ERROR_KEY, ex.getReason()))
         );
     }
 }

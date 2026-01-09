@@ -62,27 +62,26 @@ export class ConsumerTariffs {
       billingCycle: 'MONTHLY'
     };
 
-    this.http.post(
-      'http://localhost:8765/consumer-service/consumers/request-connection',
-      payload
-    ).subscribe({
-      next: () => {
-        this.showPopup(
-          'Connection request submitted successfully. Please wait for Billing Officer approval.'
-        );
-      },
-      error: err => {
-        let backendMessage = 'Failed to request connection';
+    this.http.post<{ message: string }>(
+  'http://localhost:8765/consumer-service/consumers/request-connection',
+  payload
+).subscribe({
+  next: res => {
+    this.showPopup(res.message);
+  },
+  error: err => {
+    let backendMessage = 'Failed to request connection';
 
-        if (err?.error?.error) {
-          backendMessage = err.error.error;
-        } else if (typeof err?.error === 'string') {
-          backendMessage = err.error;
-        } else if (err?.message) {
-          backendMessage = err.message;
-        }
-        this.showPopup(backendMessage);
-      }
-    });
+    if (err?.error?.error) {
+      backendMessage = err.error.error;
+    } else if (typeof err?.error === 'string') {
+      backendMessage = err.error;
+    } else if (err?.message) {
+      backendMessage = err.message;
+    }
+
+    this.showPopup(backendMessage);
+  }
+});
   }
 }

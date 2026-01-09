@@ -37,8 +37,8 @@ class AuthControllerTest {
     @Test
     void register_shouldReturnCreated() {
         RegisterRequest request = new RegisterRequest(
-                "testuser",
-                "test@example.com",
+                "pooja",
+                "pooja@gmail.com",
                 "Password@123",
                 Role.CONSUMER
         );
@@ -60,7 +60,7 @@ class AuthControllerTest {
     @Test
     void login_shouldReturnLoginResponse() {
         LoginRequest request = new LoginRequest();
-        request.setUsername("testuser");
+        request.setUsername("pooja");
         request.setPassword("Password@123");
 
         when(authService.login(any(LoginRequest.class)))
@@ -77,7 +77,7 @@ class AuthControllerTest {
     @Test
     void createConsumerUser_shouldReturnOk() {
         ConsumerAuthCreateRequest request = new ConsumerAuthCreateRequest();
-        request.setEmail("consumer@example.com");
+        request.setEmail("pooja@gmail.com");
 
         when(authService.createConsumerUser(any(ConsumerAuthCreateRequest.class)))
                 .thenReturn(Mono.empty());
@@ -93,7 +93,7 @@ class AuthControllerTest {
     @Test
     void activate_shouldReturnSuccessMessage() {
         ActivateRequest request = new ActivateRequest();
-        request.setEmail("test@example.com");
+        request.setEmail("pooja@gmail.com");
         request.setPassword("Password@123");
 
         when(authService.activateConsumer(any(ActivateRequest.class)))
